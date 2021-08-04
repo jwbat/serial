@@ -20,7 +20,7 @@ html {
   display: inline-block;
   border-radius: 4px;
   text-decoration: none;
-  padding: 10px 30px;
+  padding: 8px 15px;
 }
 
 .btn--green {

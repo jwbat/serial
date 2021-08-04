@@ -5,8 +5,6 @@ export const nrFromObj = obj => {
 
 export const emptyObj = { p: '', s: '', h: '', v: '', r: '' };
 
-
-
 // e.g,  n = 'ART-4R-V120-003_REVC'
 //            --- --  --- ---    -
 //             p  sh   v   q     r
@@ -33,5 +31,18 @@ export const isValid = obj => {
     obj.h.length > 0 &&
     obj.v.length === 3 &&
     obj.r.length > 0;
-
 };
+
+export const order = (arr, str) => {
+  function compare(x, y) {
+    if (x[str] < y[str]) return 1;
+    if (x[str] > y[str]) return -1;
+    return 0;
+  }
+
+//   convert arr of strings to arr of objects,
+//   sort by values, return arr converted back to strings
+  let arr2 = arr.map(nr => objFromNr(nr));
+  arr2.sort(compare);
+  return arr2.map(obj => nrFromObj(obj));
+}

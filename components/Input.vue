@@ -27,9 +27,9 @@
         placeholder="Revision"
       /> 
     </section> 
-    <section class="save">
-      <button type="submit" class="btn btn--green">Save</button>
-      <button @click="clearForm" type="button" class="btn btn--green">Clear</button>
+    <section class="buttons">
+      <button class="btn btn--green" type="submit" >Save</button>
+      <button class="btn btn--green" @click="clearForm" type="button" >Clear</button>
     </section> 
   </form> 
 </template>
@@ -85,14 +85,14 @@ input::placeholder {
   font-size: 1.1rem;
 }
 
-.save {
+.buttons {
   margin-block: 1rem;
   text-align: center;
 }
 
 .btn--green {
   margin: 1rem;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   border-radius: 10px;
 }
 </style>
