@@ -9,8 +9,9 @@
     <!-- INPUT COMPONENT -->
     <div>
       <Input 
-        :Q="selectedQ" 
+        :selectedQ="selectedQ" 
         @save="save" 
+        @move="move" 
         @clearForm="clearForm" 
       /> 
     </div> 
@@ -28,7 +29,7 @@
     </div> 
 
     <!-- SERIAL NUMBERS -->
-    <div>
+    <div class="container--numbers">
       <ul>
         <li class="item" v-for="nr in nrs" :key="nr">
           <span class="number" @click="edit(nr)"> 
@@ -75,6 +76,11 @@ export default {
   methods: {
     async save(obj) {
       await this.$store.dispatch('save', obj);
+      this.nrs = await this.$store.getters.nrs;
+      this.clearForm();
+    },
+    async move(obj, oldQ) {
+      await this.$store.dispatch('move', { obj, oldQ });
       this.nrs = await this.$store.getters.nrs;
       this.clearForm();
     },
@@ -136,7 +142,7 @@ export default {
   margin-inline: 10px;
   padding: 6px 12px;
   font-size: 1.3rem;
-  background: azure;
+  background: #ffeb3b;
 }
 
 .btn--ordering:hover  {
@@ -151,12 +157,16 @@ export default {
   background: #ccdf07;
 }
 
+.container--numbers {
+  padding-left: 8rem;
+}
+
 ul {
   width: 700px;
   padding-top: 3rem;
   list-style: none;
   margin-left: 0;
-  margin-bottom: 2rem;
+  margin-bottom: 6rem;
   padding-left: 0;
   font-size: 2rem; 
 }

@@ -1,5 +1,12 @@
-import { objFromNr, nrFromObj, emptyObj, QFromNr, isValid } from './utils.js';
-// q: '0012' --->  Q: 12
+import { 
+  objFromNr, 
+  nrFromObj, 
+  emptyObj, 
+  QFromNr, 
+  isValid, 
+  sortByQ 
+} from './utils.js';
+// q: '012' --->  Q: 12
 
 export const state = () => ({
   nrs: [],
@@ -16,6 +23,9 @@ export const mutations = {
   edit(state, { idx, nr }) {
     state.nrs.splice(idx, 1, nr);
   },
+  sort(state) {
+    state.nrs = sortByQ([...state.nrs]);
+  },
   incrementQ(state) {
     state.Q++;
   }
@@ -23,7 +33,7 @@ export const mutations = {
 
 export const actions = {
   save({ commit, dispatch, getters }, obj) {
-    if (!isValid(obj)) return ;
+    if (!isValid(obj)) return;
     const nr = nrFromObj(obj);
     const Q = QFromNr(nr);
     const qExists = getters.QExists(Q);
@@ -37,9 +47,15 @@ export const actions = {
     }
   },
 
-  edit({ commit }, { idx, newObj }) {
-    const nr = nrFromObj(newObj);
-    commit('edit', { idx, nr });
+  move({ commit, dispatch, getters }, { obj, oldQ }) {
+    if (!isValid(obj)) return;
+    const nr = nrFromObj(obj);
+    const newQ = QFromNr(nr);
+    const qExists = getters.QExists(newQ);
+    if (qExists || newQ > getters.nextQ) return;
+    dispatch('remove', oldQ);
+    commit('add', nr);
+    commit('sort');
   },
 
   remove({ commit, getters }, Q) {

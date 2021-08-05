@@ -34,15 +34,18 @@ export const isValid = obj => {
 };
 
 export const order = (arr, str) => {
+  //  convert arr of strings to arr of objects,
+  //  sort by values, return arr converted back to strings
   function compare(x, y) {
     if (x[str] < y[str]) return 1;
     if (x[str] > y[str]) return -1;
     return 0;
   }
-
-//   convert arr of strings to arr of objects,
-//   sort by values, return arr converted back to strings
   let arr2 = arr.map(nr => objFromNr(nr));
   arr2.sort(compare);
   return arr2.map(obj => nrFromObj(obj));
 }
+
+export const sortByQ = arr => {
+  return order(arr, 'q');
+};

@@ -1,23 +1,35 @@
 <template>
   <form @submit.prevent="onSave">
     <section class="inputs">
-      <input v-model.trim="entered.p" placeholder="Program" />
+      <input v-model.trim="entered.p" placeholder="Program" ref="inputP" />
       <input v-model.trim="entered.s" placeholder="Size" /> 
       <input v-model.trim="entered.h" placeholder="Hand" /> 
-      <input v-model.trim="entered.v" placeholder="Version" /> 
-      <input v-model.trim="entered.q" placeholder="Sequence" :disabled="!resettingQ" /> 
+      <input v-model.trim="entered.v" placeholder="Version" ref="inputV" /> 
+      <input 
+        v-model.trim="entered.q" 
+        placeholder="Sequence" 
+        :disabled="!resettingQ" 
+        ref="inputQ"
+      /> 
       <input v-model.trim="entered.r" placeholder="Revision" /> 
     </section> 
     <section class="buttons">
       <button class="btn btn--green" type="submit">Save</button>
       <button class="btn btn--green" @click="clearForm" type="button">Clear</button>
       <button 
-        v-if="!resettingQ" 
+        v-if="!resettingQ && selectedQ" 
         class="btn btn--green" 
-        @click="resetQ" 
+        @click="reassignQ" 
         type="button"
       >
-        Reset Q
+        Reassign Q
+      </button>
+      <button 
+        class="btn btn--green" 
+        type="button"
+        v-if="!selectedQ"
+      >
+        Edit Q
       </button>
     </section> 
   </form> 
@@ -27,20 +39,22 @@
 import { emptyObj } from '../store/utils.js';
 
 export default {
-  props: ['Q'],
-  emits: ['save', 'clearForm'],
+  props: ['selectedQ'],
+  emits: ['save', 'move', 'clearForm'],
   data() {
     return {
-      resettingQ: false
+      resettingQ: false,
+      oldQ: null,
     };
   },
   computed: {
     entered: {
       get() {
-        if (!this.Q) {
+        if (!this.selectedQ) {
           return this.$store.getters.nextEmptyObject;
         }
-        return this.$store.getters.objFromQ(this.Q);
+        this.$refs.inputP.focus();
+        return this.$store.getters.objFromQ(this.selectedQ);
       },
       set(newVal) {
         return newVal;
@@ -49,16 +63,24 @@ export default {
   },
   methods: {
     onSave() {
+      if (this.resettingQ) {
+        this.$emit('move', this.entered, this.oldQ);
+        this.clearForm();
+        return;
+      }
       this.$emit('save', this.entered);
       this.resettingQ = false;
     },
     clearForm() {
       this.$emit('clearForm');
       this.resettingQ = false;
+      this.oldQ = null;
     },
-    resetQ() {
+    reassignQ() {
+      this.oldQ = this.selectedQ;
       this.resettingQ = !this.resettingQ;
-    }
+      this.$refs.inputV.focus();
+    },
   },
 };
 </script>
@@ -70,7 +92,10 @@ export default {
 }
 
 input {
+  background: #ece6b1;
+  /*
   background: powderblue;
+   */
   width: 8rem;
   margin-inline: 5px;
   padding: 10px;
