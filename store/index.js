@@ -75,14 +75,6 @@ export const getters = {
       }
     };
   },
-//   objFromIdx(state) {
-//     return idx => idx > - 1 ? 
-//       objFromNr(state.nrs[idx]) :
-//       emptyObj;
-//   },
-//   nrFromIdx(state) {
-//     return idx => state.nrs[idx];
-//   },
   nrFromQ(state) {
     return Q => state.nrs.filter(nr => QFromNr(nr) === Q)[0];
   },

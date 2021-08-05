@@ -8,35 +8,32 @@
     </div>
     <!-- INPUT COMPONENT -->
     <div>
-      <Input :Q="selectedQ" @save="save" @clearForm="clearForm" /> 
+      <Input 
+        :Q="selectedQ" 
+        @save="save" 
+        @clearForm="clearForm" 
+      /> 
     </div> 
 
     <!-- ORDER BUTTONS -->
     <div class="ordering">
       <button class="btn btn--ordering" @click="reverse">Reverse</button> 
       <button 
-        v-for="s in strings"
+        v-for="str in strings"
         ref="btnRef"
         class="btn btn--ordering" 
-        @click="group(s, $event)"
-      >
-          {{ s.toUpperCase() }}
+        @click="group(str, $event)"
+      >{{ str.toUpperCase() }}
       </button> 
-
-      <!--
-      <button class="btn btn--ordering" @click="group('p', $event)">P</button> 
-      <button class="btn btn--ordering" @click="group('s', $event)">S</button> 
-      <button class="btn btn--ordering" @click="group('h', $event)">H</button> 
-      <button class="btn btn--ordering" @click="group('v', $event)">V</button> 
-      <button class="btn btn--ordering" @click="group('r', $event)">R</button> 
-      -->
     </div> 
 
-    <!-- NUMBER LIST -->
+    <!-- SERIAL NUMBERS -->
     <div>
       <ul>
         <li class="item" v-for="nr in nrs" :key="nr">
-          <span class="number" @click="edit(nr)">{{ nr }}</span> 
+          <span class="number" @click="edit(nr)"> 
+            <Card>{{ nr }}</Card> 
+          </span> 
           <button @click="remove(nr)" class="btn--del">
             <Delete class="del" />
           </button> 
@@ -137,7 +134,7 @@ export default {
 
 .btn--ordering {
   margin-inline: 10px;
-  padding: 6px;
+  padding: 6px 12px;
   font-size: 1.3rem;
   background: azure;
 }
@@ -172,10 +169,10 @@ ul {
 
 .number {
   font-size: 1.4rem;
-  font-weight: 600;
-  line-height: 1;
-  text-shadow: 1px 1px 1px grey;
+  font-weight: 400;
+  letter-spacing: 3px;
   cursor: pointer;
+  color: black;
 }
 
 .btn--del {
