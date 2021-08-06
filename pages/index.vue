@@ -19,6 +19,7 @@
     <!-- ORDER BUTTONS -->
     <div class="ordering">
       <button class="btn btn--ordering" @click="reverse">Reverse</button> 
+      <span class="span--groupby">Group by:</span> 
       <button 
         v-for="str in strings"
         ref="btnRef"
@@ -40,6 +41,16 @@
           </button> 
         </li> 
       </ul> 
+    </div> 
+     
+    <!-- BIG BUTTONS -->
+    <div class="container--bigButtons">
+      <button class="btn btn--grey" type="button" @click="add10">
+        Add 10
+      </button>
+      <button class="btn btn--grey" type="button" @click="deleteAll">
+        Delete All
+      </button>
     </div> 
   </div>
 </template>
@@ -87,6 +98,14 @@ export default {
     remove(nr) {
       this.$store.dispatch('remove', QFromNr(nr));
     },
+    async add10() {
+      await this.$store.dispatch('add10');
+      this.nrs = await this.$store.getters.nrs;
+    },
+    async deleteAll() {
+      await this.$store.dispatch('deleteAll');
+      this.nrs = await this.$store.getters.nrs;
+    },
     edit(nr) {
       this.selectedQ = QFromNr(nr);
     },
@@ -104,7 +123,7 @@ export default {
         if (el === targetEl) el.classList.toggle('highlighted');
         else el.classList.remove('highlighted');
       });
-    },
+    }
   },
 }
 </script>
@@ -112,6 +131,7 @@ export default {
 <style>
 .container {
   margin: 0 auto;
+  padding-bottom: 5rem;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -138,6 +158,16 @@ export default {
   margin-block: 1rem;
 }
 
+.span--groupby {
+  margin-inline: 10px;
+  font-size: 1.4rem;
+  padding: 5px;
+  border-top: 3px solid #4d1c03;
+  border-bottom: 3px solid #4d1c03;
+  border-radius: 10px;
+  color: #4d1c03;
+}
+
 .btn--ordering {
   margin-inline: 10px;
   padding: 6px 12px;
@@ -147,7 +177,7 @@ export default {
 
 .btn--ordering:hover  {
   cursor: pointer;
-  background: black;
+  background: blue;
   color: white;
 }
 
@@ -183,6 +213,10 @@ ul {
   letter-spacing: 3px;
   cursor: pointer;
   color: black;
+}
+
+.btn {
+  margin-inline: 1rem;
 }
 
 .btn--del {

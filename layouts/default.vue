@@ -7,7 +7,11 @@
 
 <style>
 html {
+  background: #7288a2;
+  /*
+  background: #779bac;
   background: #80a07b;
+   */
 }
 
 *,

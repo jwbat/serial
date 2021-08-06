@@ -1,21 +1,28 @@
+// function () {      if (state.nrs.length < 1) return 0;      var Qs = state.nrs.map(function (nr) {        return Object(_utils_js__WEBPACK_IMPORTED_MODULE_12__["QFromNr"])(nr);      });      return Qs.reduce(function (x, y) {        return x > y ? x : y;      });    }1
+
 import { 
   objFromNr, 
   nrFromObj, 
   emptyObj, 
   QFromNr, 
   isValid, 
-  sortByQ 
+  sortByQ,
+  get10Random,
+  formatQ,
 } from './utils.js';
 // q: '012' --->  Q: 12
 
 export const state = () => ({
   nrs: [],
-  Q: 5
+  Q: 1
 })
 
 export const mutations = {
   add(state, payload) {
     state.nrs = [...state.nrs, payload];
+  },
+  addMany(state, arr) {
+    state.nrs = [...state.nrs, ...arr];
   },
   remove(state, idx) {
     state.nrs.splice(idx, 1);
@@ -26,8 +33,14 @@ export const mutations = {
   sort(state) {
     state.nrs = sortByQ([...state.nrs]);
   },
+  setQ(state, payload) {
+    state.Q = payload;
+  },
   incrementQ(state) {
     state.Q++;
+  },
+  deleteAll(state) {
+    state.nrs = [];
   }
 }
 
@@ -67,6 +80,26 @@ export const actions = {
     commit('incrementQ');
   },
 
+  editQ({ commit, getters }, newQ) {
+    let Q = +newQ;
+    let bigQ = getters.largestQ();
+    if (Q < bigQ) return;
+    commit('setQ', Q);
+  },
+
+  add10({ commit, getters }) {
+    let Q = getters.largestQ() + 1;
+    console.log('Q: ', Q);
+    let arr = get10Random(Q);
+    commit('addMany', arr);
+    Q = getters.largestQ + 1;
+    commit('setQ', Q);
+  },
+
+  deleteAll({ commit, getters }) {
+    commit('deleteAll');
+    commit('setQ', 1);
+  }
 }
 
 export const getters = {
@@ -77,7 +110,7 @@ export const getters = {
     return state.Q;
   },
   nextq(state) {
-    return String(state.Q).padStart(3, 0);
+    return formatQ(state.Q);
   },
   nextEmptyObject(state) {
     const q = String(state.Q).padStart(3, 0);
@@ -99,6 +132,13 @@ export const getters = {
   },
   QIsUnique(state) {
     return Q => state.nrs.filter(nr => QFromNr(nr) === Q).length === 1;
+  },
+  largestQ(state) {
+    if (state.nrs.length < 1) {
+      return 0;
+    }
+    let Qs = state.nrs.map(nr => QFromNr(nr));
+    return Qs.reduce((x, y) => x > y ? x : y);
   },
   idxFromQ(state) {
     return Q => {

@@ -3,6 +3,8 @@ export const nrFromObj = obj => {
   return `${ p }-${ s }${ h }-V${ v }-${ q }_REV${ r }`;
 };
 
+export const formatQ = Q => String(Q).padStart(3, 0);
+
 export const emptyObj = { p: '', s: '', h: '', v: '', r: '' };
 
 // e.g,  n = 'ART-4R-V120-003_REVC'
@@ -48,4 +50,30 @@ export const order = (arr, str) => {
 
 export const sortByQ = arr => {
   return order(arr, 'q');
+};
+
+const randInt = (low, high) => Math.floor(Math.random() * (high - low + 1) + low);
+const randP = () => ['ART', 'CHI', 'GDO', 'SAM'][randInt(0, 3)];
+const randS = () => String(randInt(3, 6));
+const randH = () => ['R', 'L'][randInt(0, 1)];
+const randV = () => ['100', '110', '120', '130', '112', '135'][randInt(0, 5)];
+const randR = () => ['A', 'B', 'C', 'AB'][randInt(0, 3)];
+
+export const get10Random = Q => {
+  // begin w/the highest sequence number
+  const arr = [];
+  for (let i = 0; i < 10; i++) {
+    const obj = {
+      p: randP(),
+      s: randS(),
+      h: randH(),
+      v: randV(),
+      q: formatQ(Q),
+      r: randR(),
+    };
+    const nr = nrFromObj(obj);
+    arr.push(nr);
+    Q++;
+  }
+  return arr;
 };

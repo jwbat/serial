@@ -6,7 +6,8 @@
 
 <style scoped>
 .card-container {
-  background: #9be281;
+  width: 30rem;
+  background: #d8f8cd;
   border-radius: 10px;
   border: 1px solid black;
   box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
