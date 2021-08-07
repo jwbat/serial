@@ -1,5 +1,3 @@
-// function () {      if (state.nrs.length < 1) return 0;      var Qs = state.nrs.map(function (nr) {        return Object(_utils_js__WEBPACK_IMPORTED_MODULE_12__["QFromNr"])(nr);      });      return Qs.reduce(function (x, y) {        return x > y ? x : y;      });    }1
-
 import { 
   objFromNr, 
   nrFromObj, 
@@ -82,13 +80,13 @@ export const actions = {
 
   editQ({ commit, getters }, newQ) {
     let Q = +newQ;
-    let bigQ = getters.largestQ();
+    let bigQ = getters.largestQ;
     if (Q < bigQ) return;
     commit('setQ', Q);
   },
 
   add10({ commit, getters }) {
-    let Q = getters.largestQ() + 1;
+    let Q = getters.largestQ + 1;
     console.log('Q: ', Q);
     let arr = get10Random(Q);
     commit('addMany', arr);
@@ -138,6 +136,7 @@ export const getters = {
       return 0;
     }
     let Qs = state.nrs.map(nr => QFromNr(nr));
+//     console.log('store. Qs: ', Qs);
     return Qs.reduce((x, y) => x > y ? x : y);
   },
   idxFromQ(state) {

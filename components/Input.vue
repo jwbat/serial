@@ -27,6 +27,20 @@
         Reassign Q
       </button>
       <button 
+        v-if="!filtering"
+        class="btn btn--green" type="button"
+        @click="filter"
+      >
+        Filter
+      </button> 
+      <button
+        v-else
+        class="btn btn-filtering" type="button"
+        @click="filtering = !filtering"
+      >
+        Filtered
+      </button> 
+      <button 
         v-if="!selectedQ && !editingQ" @click="editQ"
         class="btn btn--green btn--editQ" type="button" 
       >
@@ -47,14 +61,13 @@
 import { emptyObj } from '../store/utils.js';
 
 export default {
-  props: ['selectedQ'],
-  emits: ['save', 'move', 'clearForm', 'editQ'],
+  props: ['selectedQ', 'filtering'],
+  emits: ['save', 'move', 'clearForm', 'editQ', 'filter'],
   data() {
     return {
       resettingQ: false,
       oldQ: null,
       editingQ: false,
-//       newQ: null
     };
   },
   computed: {
@@ -83,9 +96,11 @@ export default {
         this.$store.dispatch('editQ', newQ);
         this.clearForm();
         return;
-//         this.$emit('editQ')
       }
       this.$emit('save', this.entered);
+    },
+    filter() {
+      this.$emit('filter', this.entered);
     },
     clearForm() {
       this.$emit('clearForm');

@@ -10,7 +10,9 @@
     <div>
       <Input 
         :selectedQ="selectedQ" 
+        :filtering="filtering" 
         @save="save" 
+        @filter="filter"
         @move="move" 
         @clearForm="clearForm" 
       /> 
@@ -56,13 +58,15 @@
 </template>
 
 <script>
-import { QFromNr, order } from '../store/utils.js';
+import { QFromNr, filter, order } from '../store/utils.js';
 
 export default {
   data() {
     return {
       selectedQ: null,
       reversed: false,
+      filtering: false,
+      fields: {},
       groupBy: '',
       strings: ['p', 's', 'h', 'v', 'r'],
     };
@@ -73,6 +77,9 @@ export default {
         let numbers = [ ...this.$store.getters.nrs ];
         if (this.groupBy) {
           numbers = order(numbers, this.groupBy);
+        }
+        if (this.filtering) {
+          numbers = filter(numbers, this.fields);
         }
         if (this.reversed) {
           return numbers.reverse();
@@ -93,6 +100,11 @@ export default {
     async move(obj, oldQ) {
       await this.$store.dispatch('move', { obj, oldQ });
       this.nrs = await this.$store.getters.nrs;
+      this.clearForm();
+    },
+    filter(obj) {
+      this.filtering = !this.filtering;
+      this.fields = obj;
       this.clearForm();
     },
     remove(nr) {

@@ -52,6 +52,20 @@ export const sortByQ = arr => {
   return order(arr, 'q');
 };
 
+export const filter = (nrs, fltObj) => {
+  let filtered = [];
+  let nrObjects = nrs.map(n => objFromNr(n));
+  let fltObjKeys = Object.keys(fltObj);
+  fltObjKeys.forEach(k => {
+    for (let obj of nrObjects) {
+      if (fltObj[k] === obj[k]) {
+        filtered.push(obj);
+      }
+    }
+  });
+  return filtered.map(obj => nrFromObj(obj));
+};
+
 const randInt = (low, high) => Math.floor(Math.random() * (high - low + 1) + low);
 const randP = () => ['ART', 'CHI', 'GDO', 'SAM'][randInt(0, 3)];
 const randS = () => String(randInt(3, 6));
