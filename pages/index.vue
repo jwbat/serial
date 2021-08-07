@@ -11,6 +11,7 @@
       <Input 
         :selectedQ="selectedQ" 
         :filtering="filtering" 
+        :fields="fields" 
         @save="save" 
         @filter="filter"
         @move="move" 
@@ -47,8 +48,11 @@
      
     <!-- BIG BUTTONS -->
     <div class="container--bigButtons">
-      <button class="btn btn--grey" type="button" @click="add10">
+      <button class="btn btn--grey" type="button" @click="addN(10)">
         Add 10
+      </button>
+      <button class="btn btn--grey" type="button" @click="addN(100)">
+        Add 100
       </button>
       <button class="btn btn--grey" type="button" @click="deleteAll">
         Delete All
@@ -103,15 +107,14 @@ export default {
       this.clearForm();
     },
     filter(obj) {
-      this.filtering = !this.filtering;
+      this.filtering = true;
       this.fields = obj;
-      this.clearForm();
     },
     remove(nr) {
       this.$store.dispatch('remove', QFromNr(nr));
     },
-    async add10() {
-      await this.$store.dispatch('add10');
+    async addN(n) {
+      await this.$store.dispatch('addNRandom', n);
       this.nrs = await this.$store.getters.nrs;
     },
     async deleteAll() {
@@ -122,7 +125,10 @@ export default {
       this.selectedQ = QFromNr(nr);
     },
     clearForm() {
+      console.log('clearForm called');
+      this.filtering = false;
       this.selectedQ = null;
+      this.fields = {};
     },
     reverse() {
       this.reversed = !this.reversed;
@@ -189,14 +195,14 @@ export default {
 
 .btn--ordering:hover  {
   cursor: pointer;
-  background: blue;
+  background: orange;
   color: white;
 }
 
 .highlighted {
   border-bottom: 4px solid black;
   border-top: 4px solid black;
-  background: #ccdf07;
+  background: salmon;
 }
 
 .container--numbers {

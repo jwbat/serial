@@ -1,5 +1,5 @@
 export const nrFromObj = obj => {
-  const { p, s, h, v, q, r } = obj;
+  let { p, s, h, v, q, r } = obj;
   return `${ p }-${ s }${ h }-V${ v }-${ q }_REV${ r }`;
 };
 
@@ -52,18 +52,14 @@ export const sortByQ = arr => {
   return order(arr, 'q');
 };
 
-export const filter = (nrs, fltObj) => {
-  let filtered = [];
+export const filter = (nrs, fltrObj) => {
   let nrObjects = nrs.map(n => objFromNr(n));
-  let fltObjKeys = Object.keys(fltObj);
-  fltObjKeys.forEach(k => {
-    for (let obj of nrObjects) {
-      if (fltObj[k] === obj[k]) {
-        filtered.push(obj);
-      }
-    }
+  let fltrObjKeys = Object.keys(fltrObj)
+    .filter(key => fltrObj[key].length > 0 && key !== 'q');
+  fltrObjKeys.forEach(key => {
+    nrObjects = nrObjects.filter(obj => obj[key] === fltrObj[key]);
   });
-  return filtered.map(obj => nrFromObj(obj));
+  return nrObjects.map(obj => nrFromObj(obj));
 };
 
 const randInt = (low, high) => Math.floor(Math.random() * (high - low + 1) + low);
@@ -73,10 +69,10 @@ const randH = () => ['R', 'L'][randInt(0, 1)];
 const randV = () => ['100', '110', '120', '130', '112', '135'][randInt(0, 5)];
 const randR = () => ['A', 'B', 'C', 'AB'][randInt(0, 3)];
 
-export const get10Random = Q => {
+export const getRandom = n => Q => {
   // begin w/the highest sequence number
   const arr = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < n; i++) {
     const obj = {
       p: randP(),
       s: randS(),

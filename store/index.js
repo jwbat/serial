@@ -5,7 +5,7 @@ import {
   QFromNr, 
   isValid, 
   sortByQ,
-  get10Random,
+  getRandom,
   formatQ,
 } from './utils.js';
 // q: '012' --->  Q: 12
@@ -85,10 +85,10 @@ export const actions = {
     commit('setQ', Q);
   },
 
-  add10({ commit, getters }) {
+  addNRandom({ commit, getters }, n) {
+    let addNR = getRandom(n);
     let Q = getters.largestQ + 1;
-    console.log('Q: ', Q);
-    let arr = get10Random(Q);
+    let arr = addNR(Q);
     commit('addMany', arr);
     Q = getters.largestQ + 1;
     commit('setQ', Q);

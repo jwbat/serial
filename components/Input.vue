@@ -1,14 +1,41 @@
 <template>
   <form @submit.prevent="onSave">
     <section class="inputs">
-      <input v-if="!editingQ" v-model.trim="entered.p" placeholder="Program" ref="inputP" />
-      <input v-if="!editingQ"  v-model.trim="entered.s" placeholder="Size" /> 
-      <input v-if="!editingQ" v-model.trim="entered.h" placeholder="Hand" /> 
-      <input v-if="!editingQ" v-model.trim="entered.v" placeholder="Version" /> 
-      <input v-model.trim="entered.q" placeholder="Sequence" 
-             :disabled="!resettingQ && !editingQ" ref="inputQ"
+      <input 
+        v-if="!editingQ" 
+        v-model.trim="entered.p" 
+        v-uppercase
+        placeholder="Program" 
+        ref="inputP" 
+      />
+      <input 
+        v-if="!editingQ"  
+        v-model.trim="entered.s" 
+        placeholder="Size" 
       /> 
-      <input v-if="!editingQ" v-model.trim="entered.r" placeholder="Revision"  /> 
+      <input 
+        v-if="!editingQ" 
+        v-model.trim="entered.h" 
+        v-uppercase
+        placeholder="Hand" 
+      /> 
+      <input 
+        v-if="!editingQ" 
+        v-model.trim="entered.v" 
+        placeholder="Version" 
+      /> 
+      <input 
+        v-model.trim="entered.q" 
+        placeholder="Sequence" 
+        :disabled="!resettingQ && !editingQ" 
+        ref="inputQ"
+      /> 
+      <input 
+        v-if="!editingQ" 
+        v-model.trim="entered.r" 
+        v-uppercase
+        placeholder="Revision"  
+      /> 
     </section> 
     <section class="buttons">
       <button class="btn btn--green" type="submit">
@@ -27,19 +54,11 @@
         Reassign Q
       </button>
       <button 
-        v-if="!filtering"
-        class="btn btn--green" type="button"
-        @click="filter"
-      >
+        class="btn btn--green" type="button" 
+        @click="filter" 
+      > 
         Filter
-      </button> 
-      <button
-        v-else
-        class="btn btn-filtering" type="button"
-        @click="filtering = !filtering"
-      >
-        Filtered
-      </button> 
+      </button>
       <button 
         v-if="!selectedQ && !editingQ" @click="editQ"
         class="btn btn--green btn--editQ" type="button" 
@@ -58,10 +77,8 @@
 </template>
 
 <script>
-import { emptyObj } from '../store/utils.js';
-
 export default {
-  props: ['selectedQ', 'filtering'],
+  props: ['selectedQ', 'filtering', 'fields'],
   emits: ['save', 'move', 'clearForm', 'editQ', 'filter'],
   data() {
     return {
@@ -70,13 +87,17 @@ export default {
       editingQ: false,
     };
   },
+  mounted() { this.$refs.inputP.focus() },
   computed: {
     entered: {
       get() {
-        if (!this.selectedQ) {
-          return this.$store.getters.nextEmptyObject;
+        if (this.filtering) {
+          return { p: '', s:'', h: '', v: '', q: '', r: '', ...this.fields };
         }
-        this.$refs.inputP.focus();
+        if (!this.selectedQ) {
+          let q = this.$store.getters.nextq;
+          return { p: '', s:'', h: '', v: '', q, r: '' };
+        }
         return this.$store.getters.objFromQ(this.selectedQ);
       },
       set(newVal) {
@@ -97,10 +118,11 @@ export default {
         this.clearForm();
         return;
       }
-      this.$emit('save', this.entered);
+      this.$emit('save', this.upper(this.entered));
     },
     filter() {
-      this.$emit('filter', this.entered);
+      delete this.entered['q'];
+      this.$emit('filter', this.upper(this.entered));
     },
     clearForm() {
       this.$emit('clearForm');
@@ -118,6 +140,12 @@ export default {
       this.$nextTick(() => {
         this.$refs.inputQ.focus();
       });
+    },
+    upper(obj) {
+      obj.p = obj['p'].toUpperCase();
+      obj.h = obj['h'].toUpperCase();
+      obj.r = obj['r'].toUpperCase();
+      return obj;
     }
   },
 };
