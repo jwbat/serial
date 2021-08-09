@@ -69,11 +69,15 @@ const randH = () => ['R', 'L'][randInt(0, 1)];
 const randV = () => ['100', '110', '120', '130', '112', '135'][randInt(0, 5)];
 const randR = () => ['A', 'B', 'C', 'AB'][randInt(0, 3)];
 
+const randName = () => ['Joe', 'Sue', 'Bob', 'Yoko', 'Dweezil'][randInt(0, 5)];
+const newDate = () => new Date().toLocaleDateString();
+
 export const getRandom = n => Q => {
   // begin w/the highest sequence number
-  const arr = [];
+  const nrsArr = [];
+  const items = [];
   for (let i = 0; i < n; i++) {
-    const obj = {
+    const nrObj = {
       p: randP(),
       s: randS(),
       h: randH(),
@@ -81,11 +85,13 @@ export const getRandom = n => Q => {
       q: formatQ(Q),
       r: randR(),
     };
-    const nr = nrFromObj(obj);
-    arr.push(nr);
+    const item = { Q, name: randName(), date: newDate() };
+    const nr = nrFromObj(nrObj);
+    nrsArr.push(nr);
+    items.push(item);
     Q++;
   }
-  return arr;
+  return { nrsArr, items };
 };
 
 export const jsonFromNrs = nrs => {
