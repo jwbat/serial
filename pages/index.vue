@@ -19,7 +19,7 @@
       /> 
     </div> 
 
-    <!-- ORDER BUTTONS -->
+    <!-- GROUPBY BUTTONS -->
     <div class="ordering">
       <button class="btn btn--ordering" @click="reverse">Reverse</button> 
       <span class="span--groupby">Group by:</span> 
@@ -32,6 +32,18 @@
       </button> 
     </div> 
 
+    <!-- CSV DOWNLOAD -->
+    <div class="btns--download">
+      <download-csv
+        class="btn btn--grey btn--csv"
+        :data="json_data"
+        name="serials.csv"
+      >
+        Download CSV
+      </download-csv> 
+      <Upload class="btn btn--grey btn--csv" /> 
+    </div> 
+
     <!-- SERIAL NUMBERS -->
     <div class="container--numbers">
       <ul>
@@ -39,7 +51,7 @@
           <span class="number" @click="edit(nr)"> 
             <Card>{{ nr }}</Card> 
           </span> 
-          <button @click="remove(nr)" class="btn--del">
+          <button class="btn--del" @click="remove(nr)">
             <Delete class="del" />
           </button> 
         </li> 
@@ -62,7 +74,7 @@
 </template>
 
 <script>
-import { QFromNr, filter, order } from '../store/utils.js';
+import { QFromNr, filter, order, jsonFromNrs } from '../store/utils.js';
 
 export default {
   data() {
@@ -76,6 +88,10 @@ export default {
     };
   },
   computed: {
+    json_data() {
+      return jsonFromNrs(this.nrs);
+//       return JSON.stringify(this.nrs);
+    },
     nrs: {
       get() {
         let numbers = [ ...this.$store.getters.nrs ];
@@ -88,6 +104,7 @@ export default {
         if (this.reversed) {
           return numbers.reverse();
         }
+//         console.log('json: ', jsonFromNrs(numbers));
         return numbers;
       },
       set(n) {
@@ -125,7 +142,6 @@ export default {
       this.selectedQ = QFromNr(nr);
     },
     clearForm() {
-      console.log('clearForm called');
       this.filtering = false;
       this.selectedQ = null;
       this.fields = {};
@@ -180,17 +196,18 @@ export default {
   margin-inline: 10px;
   font-size: 1.4rem;
   padding: 5px;
-  border-top: 3px solid #4d1c03;
-  border-bottom: 3px solid #4d1c03;
+  border-top: 3px solid #9a3502;
+  border-bottom: 3px solid #9a3502;
   border-radius: 10px;
-  color: #4d1c03;
+  color: black;
+  text-shadow: 1px 1px 3px #aaa;
 }
 
 .btn--ordering {
   margin-inline: 10px;
   padding: 6px 12px;
   font-size: 1.3rem;
-  background: #ffeb3b;
+  background: #e5d232;
 }
 
 .btn--ordering:hover  {
@@ -222,7 +239,7 @@ ul {
 .item {
   padding-bottom: 0.5rem;
   display: grid;
-  grid-template-columns: 80% 10%;
+  grid-template-columns: 85% 10%;
 }
 
 .number {
@@ -231,6 +248,7 @@ ul {
   letter-spacing: 3px;
   cursor: pointer;
   color: black;
+  margin-left: 5rem;
 }
 
 .btn {
@@ -238,9 +256,14 @@ ul {
 }
 
 .btn--del {
-  margin-left: 3rem;;
+  margin-left: 1rem;
   background: none;
   border: none;
+}
+
+.btn--csv {
+  color: #ddd;
+  border-color: #ddd;
 }
 
 .del:hover {
@@ -250,5 +273,67 @@ ul {
 
 .del {
   stroke: maroon;
+}
+
+@media (max-width: 480px) {
+  .container {
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+  }
+  .title {
+    text-align: center;
+  }
+  .ordering {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin-block: 0.5rem;
+  }
+  .span--groupby {
+    width: 100%;
+    margin-top: 1rem;
+    margin-inline: 6rem;
+    text-align: center;
+  }
+  .btns--download {
+    display: flex;
+    justify-content: space-around;
+  }
+  .container--numbers {
+    max-width: 100%;
+    padding: 1rem;
+  }
+  .number {
+    font-size: 1.1rem;
+    font-weight: 400;
+    letter-spacing: 1px;
+    cursor: pointer;
+    color: black;
+    margin-left: 0.5rem;
+  }
+  ul {
+    width: 280px;
+    padding-top: 2rem;
+    list-style: none;
+    margin-bottom: 4rem;
+    padding-left: 0;
+    padding: 1rem;
+    font-size: 1.1rem; 
+  }
+  .item {
+    display: grid;
+    grid-template-columns: 70% 20%;
+    grid-column-gap: 3rem;
+  }
+  .container--bigButtons {
+    display: flex;
+    flex-direction: column;
+  }
+  .btn--grey {
+    font-size: 1rem;
+    padding: 10px;
+  }
 }
 </style>

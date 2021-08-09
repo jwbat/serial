@@ -27,6 +27,7 @@
       <input 
         v-model.trim="entered.q" 
         placeholder="Sequence" 
+        :class="{ disabled: !resettingQ && !editingQ }"
         :disabled="!resettingQ && !editingQ" 
         ref="inputQ"
       /> 
@@ -42,33 +43,42 @@
         Save
       </button>
       <button 
-        v-if="!editingQ" class="btn btn--green" 
-        @click="clearForm" type="button"
+        v-if="!editingQ" 
+        @click="clearForm" 
+        class="btn btn--green" 
+        type="button"
       >
         Clear
       </button>
       <button 
-        v-if="!resettingQ && selectedQ" class="btn btn--green" 
-        @click="reassignQ" type="button"
+        v-if="!resettingQ && selectedQ" 
+        @click="reassignQ" 
+        class="btn btn--green" 
+        type="button"
       >
         Reassign Q
       </button>
       <button 
-        class="btn btn--green" type="button" 
+        v-if="!selectedQ && !editingQ"
         @click="filter" 
+        class="btn btn--green" 
+        type="button" 
       > 
         Filter
       </button>
       <button 
-        v-if="!selectedQ && !editingQ" @click="editQ"
-        class="btn btn--green btn--editQ" type="button" 
+        v-if="!selectedQ && !editingQ"
+        @click="editQ"
+        class="btn btn--green btn--editQ"
+        type="button" 
       >
         Edit Q
       </button>
       <button 
-        v-else class="btn btn--green" 
-        type="button"
+        v-if="editingQ"
         @click="editingQ = false"
+        class="btn btn--green" 
+        type="button"
       >
         Exit
       </button>
@@ -157,8 +167,26 @@ export default {
   justify-content: center;
 }
 
+@media (max-width: 480px) {
+  .inputs {
+    flex-direction: column;
+    align-items: center;
+  }
+  input {
+    margin-top: 10px;
+  }
+  .buttons {
+    display: grid;
+    grid-template-columns: 40% 40%;
+    justify-content: space-around;
+  }
+  .btn {
+    width: 7rem;
+  }
+}
+
 input {
-  background: #ece6b1;
+  background: #9ffafa;
   width: 8rem;
   margin-inline: 5px;
   padding: 10px;
@@ -173,6 +201,10 @@ input {
 
 input::placeholder {
   font-size: 1.1rem;
+}
+
+.disabled {
+  background: lightgrey;
 }
 
 .buttons {

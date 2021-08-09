@@ -1,14 +1,25 @@
 <template>
-  <div class="rules">
+  <div class="info">
     <section class="format">
-      <h2>enter: CHI 5 R 110 001 A </h2><br /> 
-      <h2>format: CHI-5R-V110-001_REVA</h2> 
+      <h2>Inputs</h2> 
+      <p>
+        Input fields must all contain values before Save or Return 
+        will add it to the list.
+      </p>
+      <p>
+      CHI 5 R 110 001 A will format as  CHI-5R-V110-001_REVA
+      </p><br /> 
     </section> 
     <section>
       <h2>Next Q</h2> 
       <p>
-        The sequence number field holds the next, default Q value.
+        The second to last field holds the sequence number, Q, which is 
+        auto-incremented.
       </p> 
+      <p>
+        It can be reset via Edit Q but not to a value lower than the 
+        highest value already assigned.
+      </p>
     </section> 
     <section>
       <h2>Reassigning Q</h2> 
@@ -29,15 +40,17 @@ export default {
 </script>
 
 <style scoped>
-.rules {
+.info {
   color: #f1f1d2;
   padding-top: 3rem;
   padding-right: 3rem;
-  padding-left: 8rem;
+  padding-left: 20vw;
   display: flex;
   flex-direction: column;
   background: #09192b;
   min-height: 100vh;
+  line-height: 1.6;
+  letter-spacing: 1.5px;
 }
 
 section {
@@ -62,7 +75,7 @@ h4 {
 }
 
 p {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
 }
 </style>
 

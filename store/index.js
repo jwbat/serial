@@ -43,6 +43,15 @@ export const mutations = {
 }
 
 export const actions = {
+  replace({ commit, dispatch, getters }, objects) {
+    let nrs = objects.map(obj => nrFromObj(obj));
+    dispatch('deleteAll');
+    commit('addMany', nrs);
+
+    let Q = getters.largestQ;
+    commit('setQ', Q + 1);
+  },
+
   save({ commit, dispatch, getters }, obj) {
     if (!isValid(obj)) return;
     const nr = nrFromObj(obj);
@@ -56,6 +65,7 @@ export const actions = {
       const idx = getters.idxFromQ(Q);
       commit('edit', { idx, nr });
     }
+    commit('sort');
   },
 
   move({ commit, dispatch, getters }, { obj, oldQ }) {
@@ -92,6 +102,7 @@ export const actions = {
     commit('addMany', arr);
     Q = getters.largestQ + 1;
     commit('setQ', Q);
+    commit('sort');
   },
 
   deleteAll({ commit, getters }) {
@@ -136,7 +147,6 @@ export const getters = {
       return 0;
     }
     let Qs = state.nrs.map(nr => QFromNr(nr));
-//     console.log('store. Qs: ', Qs);
     return Qs.reduce((x, y) => x > y ? x : y);
   },
   idxFromQ(state) {

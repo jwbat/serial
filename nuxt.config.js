@@ -26,6 +26,7 @@ export default {
   plugins: [
     '~/plugins/persistedState.client.js',
      '~/plugins/directives.js',
+     '~/plugins/download-csv.js',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

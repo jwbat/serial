@@ -10,7 +10,6 @@ html {
   background: #7288a2;
   /*
   background: #779bac;
-  background: #80a07b;
    */
 }
 
@@ -26,6 +25,7 @@ html {
   border-radius: 4px;
   text-decoration: none;
   padding: 8px 15px;
+  cursor: pointer;
 }
 
 .btn--green {

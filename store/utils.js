@@ -87,3 +87,34 @@ export const getRandom = n => Q => {
   }
   return arr;
 };
+
+export const jsonFromNrs = nrs => {
+  const jsonArray = [];
+  let nrObjects = nrs.map(n => objFromNr(n));
+  nrObjects.forEach(obj => {
+    jsonArray.push({
+      'Program': obj.p,
+      'Size': obj.s,
+      'Hand': obj.h,
+      'Version': obj.v,
+      'Sequence': obj.q,
+      'Revision': obj.r
+    });
+  });
+  return jsonArray;
+};
+
+export const csvToJson = csvString => {
+  const keys = ['p', 's', 'h', 'v', 'q', 'r'];
+  let lines = csvString.split(/\r|\n/);
+//    const nrlines = lines.slice(1).map(l => l.length ? l : '');
+  lines = lines.filter(l => l.length > 0).slice(1);
+  let objects = lines.map(line => {
+    const fields = line.split(',');
+    return Object.fromEntries(keys.map((key, i) => [key, fields[i]]))
+  });
+//    console.log('nrs: ', nrs);
+   return objects;
+};
+//   let nrs = objects.map(obj => nrFromObj(obj));
+

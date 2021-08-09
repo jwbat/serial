@@ -6,7 +6,7 @@
 
 <style scoped>
 .card-container {
-  width: 30rem;
+  width: 25rem;
   background: #d8f8cd;
   border-radius: 10px;
   border: 1px solid black;
@@ -16,6 +16,14 @@
 
 .card-container:hover {
   background: coral;
+}
+
+@media (max-width: 480px) {
+  .card-container {
+    width: 70vw;
+    padding: 8px;
+    font-size: 0.9rem;
+  }
 }
 </style>
 
