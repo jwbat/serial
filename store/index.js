@@ -22,7 +22,7 @@ export const mutations = {
   },
   addItem(state, payload) {
     state.items = [...state.nrs, payload];
-  }
+  },
   addManyNrs(state, arr) {
     state.nrs = [...state.nrs, ...arr];
   },
@@ -38,7 +38,7 @@ export const mutations = {
     state.nrs.splice(idx, 1, nr);
   },
   editItem(state, { idx, item }) {
-    state.item.splice(idx, 1, item);
+    state.items.splice(idx, 1, item);
   },
   sortNrs(state) {
     state.nrs = sortByQ([...state.nrs]);
@@ -57,7 +57,7 @@ export const mutations = {
 
 export const actions = {
   replaceAll({ commit, dispatch, getters }, payload) {
-    let { nrObjects, items } = payload;
+//     const { p, s, h, v, q, r, name } = payload;
     let nrs = nrObjects.map(obj => nrFromObj(obj));
     dispatch('deleteAll');
     commit('addManyNrs', nrs);
@@ -68,9 +68,12 @@ export const actions = {
   },
 
   save({ commit, dispatch, getters }, payload) {
-    const date = new Date().toLocaleDateString();
-    const { name, nrObj } = payload;
+    const { p, s, h, v, q, r, name } = payload;
+
+    const nrObj = { p, s, h, v, q, r };
     if (!isValid(nrObj)) return;
+
+    const date = new Date().toLocaleDateString();
     const nr = nrFromObj(nrObj);
     const Q = QFromNr(nr);
     const qExists = getters.QExists(Q);
@@ -82,6 +85,7 @@ export const actions = {
     } else {
       const nrIdx = getters.nrIdxFromQ(Q);
       const itemIdx = getters.itemIdxFromQ(Q);
+      const item = { Q, name, date };
       commit('editNr', { nrIdx, nr });
       commit('editItem', { itemIdx, item });
     }
@@ -141,13 +145,13 @@ export const getters = {
     return state.nrs;
   },
   items(state) {
-    return state.items;
+    return [ ...state.items ];
   },
   itemFromQ(state) {
-    return Q => state.items.filter(item => item.Q === Q)[0];
+    return Q => [...state.items].filter(item => item.Q === Q)[0];
   },
   itemIdxFromQ(state) {
-    return Q => state.items.reduce((acc, val, idx) => val.Q === Q ? idx : acc, 0);
+    return Q => [...state.items].reduce((acc, val, idx) => val.Q === Q ? idx : acc, 0);
   },
   nextQ(state) {
     return state.Q;

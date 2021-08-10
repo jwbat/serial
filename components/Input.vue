@@ -37,6 +37,11 @@
         v-uppercase
         placeholder="Revision"  
       /> 
+      <input 
+        v-if="!editingQ"  
+        v-model.trim="entered.name" 
+        placeholder="Name" 
+      /> 
     </section> 
     <section class="buttons">
       <button class="btn btn--green" type="submit">
@@ -102,11 +107,11 @@ export default {
     entered: {
       get() {
         if (this.filtering) {
-          return { p: '', s:'', h: '', v: '', q: '', r: '', ...this.fields };
+          return { p: '', s:'', h: '', v: '', q: '', r: '', name: '', ...this.fields };
         }
         if (!this.selectedQ) {
           let q = this.$store.getters.nextq;
-          return { p: '', s:'', h: '', v: '', q, r: '' };
+          return { p: '', s:'', h: '', v: '', q, r: '', name: '' };
         }
         return this.$store.getters.objFromQ(this.selectedQ);
       },
@@ -128,7 +133,8 @@ export default {
         this.clearForm();
         return;
       }
-      this.$emit('save', this.upper(this.entered));
+      const entered = this.upper(this.entered);
+      this.$emit('save', entered);
     },
     filter() {
       delete this.entered['q'];

@@ -104,7 +104,6 @@ export default {
         if (this.reversed) {
           return numbers.reverse();
         }
-//         console.log('json: ', jsonFromNrs(numbers));
         return numbers;
       },
       set(n) {
