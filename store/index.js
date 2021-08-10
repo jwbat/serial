@@ -11,37 +11,21 @@ import {
 // q: '012' --->  Q: 12
 
 export const state = () => ({
-  nrs: [],
-  items: [], // [{ Q, name, date }]
+  items: [], // [{ Q, nr, name, date }]
   Q: 1
 })
 
 export const mutations = {
-  addNr(state, payload) {
-    state.nrs = [...state.nrs, payload];
-  },
   addItem(state, payload) {
-    state.items = [...state.nrs, payload];
-  },
-  addManyNrs(state, arr) {
-    state.nrs = [...state.nrs, ...arr];
+    state.items = [...state.items, payload];
   },
   addManyItems(state, arr) {
     state.items = [...state.items, ...arr];
   },
-  removeNr(state, idx) {
-    state.nrs.splice(idx, 1);
-  },
   removeItem(state, Q) {
-  },
-  editNr(state, { idx, nr }) {
-    state.nrs.splice(idx, 1, nr);
   },
   editItem(state, { idx, item }) {
     state.items.splice(idx, 1, item);
-  },
-  sortNrs(state) {
-    state.nrs = sortByQ([...state.nrs]);
   },
   setQ(state, payload) {
     state.Q = payload;
@@ -50,14 +34,15 @@ export const mutations = {
     state.Q++;
   },
   deleteAll(state) {
-    state.nrs = [];
     state.items = [];
   }
 }
 
-export const actions = {
-  replaceAll({ commit, dispatch, getters }, payload) {
-//     const { p, s, h, v, q, r, name } = payload;
+
+export const actions = {                               
+  replaceAll({ commit, dispatch, getters }, payload) {    // TODO
+//     const { nrObjects } = payload;
+    const nrObj = { p, s, h, v, q, r };
     let nrs = nrObjects.map(obj => nrFromObj(obj));
     dispatch('deleteAll');
     commit('addManyNrs', nrs);
@@ -67,29 +52,24 @@ export const actions = {
     commit('setQ', Q + 1);
   },
 
-  save({ commit, dispatch, getters }, payload) {
-    const { p, s, h, v, q, r, name } = payload;
+  save({ commit, dispatch, getters }, item) {
+    const { Q, nr, name, date } = item;
 
-    const nrObj = { p, s, h, v, q, r };
-    if (!isValid(nrObj)) return;
+    if (!isValid(nr)) return;
 
-    const date = new Date().toLocaleDateString();
-    const nr = nrFromObj(nrObj);
-    const Q = QFromNr(nr);
+    date = date || new Date().toISOString().slice(2, 10);
     const qExists = getters.QExists(Q);
 
+    // add new item
     if (!qExists) {
       commit('addNr', nr);
       commit('addItem', { Q, name, date });
       dispatch('incrementQ');
-    } else {
-      const nrIdx = getters.nrIdxFromQ(Q);
-      const itemIdx = getters.itemIdxFromQ(Q);
-      const item = { Q, name, date };
-      commit('editNr', { nrIdx, nr });
-      commit('editItem', { itemIdx, item });
+    } else { // edit item
+      const idx = getters.idxFromQ(Q);
+      commit('editItem', { idx, item });
     }
-    commit('sortNrs');
+//      commit('sortNrs');
   },
 
   move({ commit, dispatch, getters }, { obj, oldQ }) {
@@ -100,16 +80,13 @@ export const actions = {
     if (qExists || newQ > getters.nextQ) return;
     const item = getters.itemFromQ(oldQ);
     dispatch('remove', oldQ);
-    commit('addNr', nr);
     commit('addItem', item);
-    commit('sortNrs');
+//     commit('sortNrs');
   },
 
   remove({ commit, getters }, Q) {
-    const itemIdx = getters.itemIdxFromQ(Q);
-    const nrIdx = getters.nrIdxFromQ(Q);
-    commit('removeNr', nrIdx);
-    commit('removeItem', itemIdx);
+    const idx = getters.idxFromQ(Q);
+    commit('removeItem', idx);
   },
 
   incrementQ({ commit }) {
@@ -127,11 +104,10 @@ export const actions = {
     let addNR = getRandom(n);
     let Q = getters.largestQ + 1;
     let { nrsArr, items } = addNR(Q);
-    commit('addManyNrs', nrsArr);
     commit('addManyItems', items);
     Q = getters.largestQ + 1;
     commit('setQ', Q);
-    commit('sortNrs');
+//     commit('sortNrs');
   },
 
   deleteAll({ commit, getters }) {
@@ -142,16 +118,16 @@ export const actions = {
 
 export const getters = {
   nrs(state) {
-    return state.nrs;
+    return state.items.map(item => item.nr);
   },
   items(state) {
-    return [ ...state.items ];
+    return [...state.items];
   },
   itemFromQ(state) {
-    return Q => [...state.items].filter(item => item.Q === Q)[0];
+    return Q => state.items.filter(item => item.Q === Q)[0];
   },
-  itemIdxFromQ(state) {
-    return Q => [...state.items].reduce((acc, val, idx) => val.Q === Q ? idx : acc, 0);
+  idxFromQ(state) {
+    return Q => state.items.reduce((acc, val, idx) => val.Q === Q ? idx : acc, 0);
   },
   nextQ(state) {
     return state.Q;
@@ -159,41 +135,24 @@ export const getters = {
   nextq(state) {
     return formatQ(state.Q);
   },
-  nextEmptyObject(state) {
-    const q = String(state.Q).padStart(3, 0);
-    return { ...emptyObj, q };
-  },
-  objFromQ(state, getters) {
-    return Q => {
-      if (getters.QExists(Q)) {
-        const nr = getters.nrFromQ(Q);
-        return objFromNr(nr);
-      }
-    };
-  },
-  nrFromQ(state) {
-    return Q => state.nrs.filter(nr => QFromNr(nr) === Q)[0];
+//  nextEmptyObject(state) {
+//    const q = String(state.Q).padStart(3, 0);
+//    return { ...emptyObj, q };
+//  },
+  nrFromQ(state, getters) {
+    return Q => state.items.reduce((acc, val, idx) => val.Q === Q ? val.nr : acc, null);
   },
   QExists(state) {
-    return Q => state.nrs.filter(nr => QFromNr(nr) === Q).length > 0;
+    return Q => state.items.filter(item => item.Q === Q).length > 0;
   },
   QIsUnique(state) {
-    return Q => state.nrs.filter(nr => QFromNr(nr) === Q).length === 1;
+    return Q => state.items.filter(item => item.Q === Q).length === 1;
   },
   largestQ(state) {
-    if (state.nrs.length < 1) {
+    if (state.items.length < 1) {
       return 0;
     }
-    let Qs = state.nrs.map(nr => QFromNr(nr));
+    let Qs = state.items.map(item => item.Q);
     return Qs.reduce((x, y) => x > y ? x : y);
   },
-  nrIdxFromQ(state) {
-    return Q => {
-      for (let i = 0; i < state.nrs.length; i++) {
-        if (QFromNr(state.nrs[i]) === Q) {
-          return i;
-        }
-      }
-    }
-  }
-}
+};

@@ -5,13 +5,13 @@ export const nrFromObj = obj => {
 
 export const formatQ = Q => String(Q).padStart(3, 0);
 
-export const emptyObj = { p: '', s: '', h: '', v: '', r: '' };
+export const emptyObj = { p: '', s: '', h: '', v: '', r: '', name: '' };
 
 // e.g,  n = 'ART-4R-V120-003_REVC'
 //            --- --  --- ---    -
 //             p  sh   v   q     r
-export const objFromNr = n => {
-  const arr = n.split(/[-_]+/);
+export const objFromNr = nr => {
+  const arr = nr.split(/[-_]+/);
   const p = arr[0];
   const s = arr[1][0];
   const h = arr[1][1];
@@ -27,7 +27,8 @@ export const QFromNr = nr => {
   return +q;
 };
 
-export const isValid = obj => {
+export const isValid = nr => {
+  const obj = objFromNr(nr);
   return obj.p.length > 0 &&
     obj.s.length > 0 &&
     obj.h.length > 0 &&
@@ -35,31 +36,45 @@ export const isValid = obj => {
     obj.r.length > 0;
 };
 
-export const order = (arr, str) => {
-  //  convert arr of strings to arr of objects,
-  //  sort by values, return arr converted back to strings
+export const fieldsFromItem = item => {
+  const nr = item.nr;
+  return { ...objFromNr(nr), name: item.name, date: item.date };
+};
+
+export const itemFromFields = fields => {
+  const { p, s, h, v, q, r, name, date  } = fields;
+  const Q = +q;
+  const nr = nrFromObj({ p, s, h, v, q, r });
+  return { Q, nr, name, date };
+};
+
+export const sortItems = (items, str) => {
+  //  convert arr of items to arr of field objects
+  //  sort by str, return sorted arr of items
   function compare(x, y) {
     if (x[str] < y[str]) return 1;
     if (x[str] > y[str]) return -1;
     return 0;
   }
-  let arr2 = arr.map(nr => objFromNr(nr));
-  arr2.sort(compare);
-  return arr2.map(obj => nrFromObj(obj));
+  const fieldsArr = items.map(item => fieldsFromItem(item));
+  fieldsArr.sort(compare);
+  return fieldsArr.map(fields => itemFromFields(fields));
 }
 
-export const sortByQ = arr => {
+export const sortByQ = items => {
   return order(arr, 'q');
 };
 
-export const filter = (nrs, fltrObj) => {
-  let nrObjects = nrs.map(n => objFromNr(n));
+export const filter = (items, fltrObj) => {
+  const fieldsArr = items.map(item => fieldsFromItem(item));
+
   let fltrObjKeys = Object.keys(fltrObj)
     .filter(key => fltrObj[key].length > 0 && key !== 'q');
+
   fltrObjKeys.forEach(key => {
-    nrObjects = nrObjects.filter(obj => obj[key] === fltrObj[key]);
+    fieldsArr = fieldsArr.filter(obj => obj[key] === fltrObj[key]);
   });
-  return nrObjects.map(obj => nrFromObj(obj));
+  return fieldsArr.map(fields => itemFromFields(fields));
 };
 
 const randInt = (low, high) => Math.floor(Math.random() * (high - low + 1) + low);
@@ -70,11 +85,12 @@ const randV = () => ['100', '110', '120', '130', '112', '135'][randInt(0, 5)];
 const randR = () => ['A', 'B', 'C', 'AB'][randInt(0, 3)];
 
 const randName = () => ['Joe', 'Sue', 'Bob', 'Yoko', 'Dweezil'][randInt(0, 5)];
-const newDate = () => new Date().toLocaleDateString();
+const newDate = () => new Date().toISOString().slice(2, 10);
+
+// TODO vv v v vv v v vv v v v v v v
 
 export const getRandom = n => Q => {
   // begin w/the highest sequence number
-  const nrsArr = [];
   const items = [];
   for (let i = 0; i < n; i++) {
     const nrObj = {
@@ -85,13 +101,19 @@ export const getRandom = n => Q => {
       q: formatQ(Q),
       r: randR(),
     };
-    const item = { Q, name: randName(), date: newDate() };
-    const nr = nrFromObj(nrObj);
-    nrsArr.push(nr);
+    const item = { 
+      Q, 
+      nr: nrFromObj(nrObj), 
+      name: randName(), 
+      date: new Date().toLocaleDateString() 
+    };
     items.push(item);
     Q++;
   }
-  return { nrsArr, items };
+  return items;
+};
+
+export const nrObjectsFromItems = items => {
 };
 
 export const jsonFromNrs = nrs => {
