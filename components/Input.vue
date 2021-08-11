@@ -113,7 +113,7 @@ export default {
           let q = this.$store.getters.nextq;
           return { p: '', s:'', h: '', v: '', q, r: '', name: '' };
         }
-        return this.$store.getters.objFromQ(this.selectedQ);
+        return this.$store.getters.fieldsFromQ(this.selectedQ);
       },
       set(newVal) {
         return newVal;
@@ -133,8 +133,7 @@ export default {
         this.clearForm();
         return;
       }
-      const entered = this.upper(this.entered);
-      this.$emit('save', entered);
+      this.$emit('save', this.upper(this.entered));
     },
     filter() {
       delete this.entered['q'];

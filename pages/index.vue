@@ -44,14 +44,18 @@
       <Upload class="btn btn--grey btn--csv" /> 
     </div> 
 
+    <!--
+
+    -->
+
     <!-- SERIAL NUMBERS -->
     <div class="container--numbers">
       <ul>
-        <li class="item" v-for="nr in nrs" :key="nr">
-          <span class="number" @click="edit(nr)"> 
-            <Card>{{ nr }}</Card> 
+        <li class="item" v-for="item in items" :key="item.Q">
+          <span class="number" @click="edit(item)"> 
+            <Card>{{ item.nr }}    {{ item.date }} {{ item.name }}</Card> 
           </span> 
-          <button class="btn--del" @click="remove(nr)">
+          <button class="btn--del" @click="remove(item)">
             <Delete class="del" />
           </button> 
         </li> 
@@ -74,7 +78,7 @@
 </template>
 
 <script>
-import { QFromNr, filter, order, jsonFromNrs } from '../store/utils.js';
+import { QFromItem, filter, sortItems, jsonFromItems } from '../store/utils.js';
 
 export default {
   data() {
@@ -84,27 +88,27 @@ export default {
       filtering: false,
       fields: {},
       groupBy: '',
-      strings: ['p', 's', 'h', 'v', 'r'],
+      strings: ['p', 's', 'h', 'v', 'r', 'name', 'date'], // for groupby
     };
   },
   computed: {
     json_data() {
-      return jsonFromNrs(this.nrs);
-//       return JSON.stringify(this.nrs);
+      return jsonFromItems(this.items);
     },
-    nrs: {
+    items: {
       get() {
-        let numbers = [ ...this.$store.getters.nrs ];
+        let arr = [ ...this.$store.getters.items ];
+        console.log('items: ', arr);
         if (this.groupBy) {
-          numbers = order(numbers, this.groupBy);
+          arr = sortItems(arr, this.groupBy);
         }
         if (this.filtering) {
-          numbers = filter(numbers, this.fields);
+          arr = filter(arr, this.fields);
         }
         if (this.reversed) {
-          return numbers.reverse();
+          return arr.reverse();
         }
-        return numbers;
+        return arr;
       },
       set(n) {
         return n;
@@ -112,33 +116,33 @@ export default {
     },
   },
   methods: {
-    async save(obj) {
-      await this.$store.dispatch('save', obj);
-      this.nrs = await this.$store.getters.nrs;
+    async save(fieldsObj) {
+      await this.$store.dispatch('save', fieldsObj);
+      this.items = await this.$store.getters.items;
       this.clearForm();
     },
-    async move(obj, oldQ) {
-      await this.$store.dispatch('move', { obj, oldQ });
-      this.nrs = await this.$store.getters.nrs;
+    async move(fieldsObj, oldQ) {
+      await this.$store.dispatch('move', { fieldsObj, oldQ });
+      this.items = await this.$store.getters.items;
       this.clearForm();
     },
-    filter(obj) {
+    filter(fieldsObj) {
       this.filtering = true;
-      this.fields = obj;
+      this.fields = fieldsObj;
     },
-    remove(nr) {
-      this.$store.dispatch('remove', QFromNr(nr));
+    remove(item) {
+      this.$store.dispatch('removeItem', QFromItem(item));
     },
     async addN(n) {
       await this.$store.dispatch('addNRandom', n);
-      this.nrs = await this.$store.getters.nrs;
+      this.items = await this.$store.getters.items;
     },
     async deleteAll() {
       await this.$store.dispatch('deleteAll');
-      this.nrs = await this.$store.getters.nrs;
+      this.items = await this.$store.getters.items;
     },
-    edit(nr) {
-      this.selectedQ = QFromNr(nr);
+    edit(item) {
+      this.selectedQ = QFromItem(item);
     },
     clearForm() {
       this.filtering = false;
@@ -222,7 +226,7 @@ export default {
 }
 
 .container--numbers {
-  padding-left: 8rem;
+  margin-left: -2rem;
 }
 
 ul {
@@ -239,6 +243,7 @@ ul {
   padding-bottom: 0.5rem;
   display: grid;
   grid-template-columns: 85% 10%;
+  grid-column-gap: 6rem;
 }
 
 .number {
@@ -247,7 +252,7 @@ ul {
   letter-spacing: 3px;
   cursor: pointer;
   color: black;
-  margin-left: 5rem;
+  margin-left: 6rem;
 }
 
 .btn {
@@ -255,7 +260,7 @@ ul {
 }
 
 .btn--del {
-  margin-left: 1rem;
+  margin-left: 8rem;
   background: none;
   border: none;
 }
@@ -317,8 +322,8 @@ ul {
     padding-top: 2rem;
     list-style: none;
     margin-bottom: 4rem;
-    padding-left: 0;
     padding: 1rem;
+    padding-left: 0;
     font-size: 1.1rem; 
   }
   .item {
