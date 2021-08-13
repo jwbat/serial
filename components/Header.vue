@@ -21,9 +21,7 @@ nav {
 
 a {
   color: black;
-  /*
-  color: white;
-   */
   text-decoration: none;
+  font-size: 1.4rem;
 }
 </style>

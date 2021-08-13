@@ -16,14 +16,20 @@ export const emptyObj = { p: '', s: '', h: '', v: '', r: '', name: '' };
 //             p  sh   v   q     r
 export const objFromNr = nr => {
   if (!nr) return {};
-  const arr = nr.split(/[-_]+/);
-  const p = arr[0];
-  const s = arr[1][0];
-  const h = arr[1][1];
-  const v = arr[2].slice(1);
-  const q = arr[3];
-  const r = arr[4].match(/(?<=REV).*/g)[0];
-  return { p, s, h, v, q, r };
+  try {
+    const arr = nr.split(/[-_]+/);
+    const p = arr[0];
+    const s = arr[1][0];
+    const h = arr[1][1];
+    const v = arr[2].slice(1);
+    const q = arr[3];
+    const r = arr[4].slice(3)[0];
+    return { p, s, h, v, q, r };
+  }
+  catch {
+    console.log('nr: ', nr);
+    return ;
+  }
 };
 
 export const QFromItem = item => item.Q;
@@ -62,17 +68,17 @@ export const sortItems = (items, str) => {
     if (x[str] > y[str]) return -1;
     return 0;
   }
-  const fieldsArr = items.map(item => fieldsFromItem(item));
+  let fieldsArr = items.map(item => fieldsFromItem(item));
   fieldsArr.sort(compare);
   return fieldsArr.map(fields => itemFromFields(fields));
 }
 
 export const sortByQ = items => {
-  return order(arr, 'q');
+  return sortItems(items, 'q');
 };
 
 export const filter = (items, fltrObj) => {
-  const fieldsArr = items.map(item => fieldsFromItem(item));
+  let fieldsArr = items.map(item => fieldsFromItem(item));
 
   let fltrObjKeys = Object.keys(fltrObj)
     .filter(key => fltrObj[key].length > 0 && key !== 'q');
@@ -90,7 +96,7 @@ const randH = () => ['R', 'L'][randInt(0, 1)];
 const randV = () => ['100', '110', '120', '130', '112', '135'][randInt(0, 5)];
 const randR = () => ['A', 'B', 'C', 'AB'][randInt(0, 3)];
 
-const randName = () => ['Joe', 'Bob', 'Sue', 'Yoko', 'Dweezil'][randInt(0, 4)];
+const randName = () => ['Joe', 'Elmer', 'Sue', 'Yoko', 'Dweezil'][randInt(0, 4)];
 
 
 export const getDate = () => {
@@ -132,7 +138,7 @@ export const getNRandomItems = n => Q => {
 };
 
 export const jsonFromItems = items => {
-  if (items.length < 1) return [];
+  if (!items || items.length < 1) return [];
   const jsonArray = [];
 
   let fieldsArr = items.map(item => fieldsFromItem(item));
@@ -155,11 +161,12 @@ export const csvToJson = csvString => {
   const keys = ['p', 's', 'h', 'v', 'q', 'r', 'name', 'date'];
   let lines = csvString.split(/\r|\n/);
 
-  lines = lines.filter(l => l.length > 0).slice(1);
+  lines = lines.filter(line => line.length > 0).slice(1);
   let objects = lines.map(line => {
     const fields = line.split(',');
-    return Object.fromEntries(keys.map((key, i) => [key, fields[i]]))
+    if (fields.length !== 8) return 'error';
+    return Object.fromEntries(keys.map((key, i) => [key, fields[i]]));
   });
-   return objects; // objectArray
+  if (objects.includes('error')) return false;
+  return objects; // objectArray
 };
-

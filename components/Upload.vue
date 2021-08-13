@@ -15,6 +15,7 @@
 import { csvToJson } from '../store/utils.js';
 
 export default {
+  emits: ['upload-error'],
   methods: {
     preview(e) {
       let file = e.target.files[0];
@@ -22,7 +23,12 @@ export default {
       reader.onload = e => {
         let contents = e.target.result;
         let objects = csvToJson(contents);
-        this.$store.dispatch('replace', objects);
+        if (!objects)  {
+          this.$emit('upload-error');
+          return;
+        } else {
+          this.$store.dispatch('replace', objects);
+        }
       };
       reader.readAsText(file);
     }

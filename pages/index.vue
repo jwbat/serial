@@ -1,11 +1,9 @@
 <template>
   <div class="container">
     <!-- TITLE -->
-    <div>
       <h1 class="title">
         serial numbers
       </h1>
-    </div>
     <!-- INPUT COMPONENT -->
     <div>
       <Input 
@@ -32,7 +30,7 @@
       </button> 
     </div> 
 
-    <!-- CSV DOWNLOAD -->
+    <!-- CSV DOWNLOAD UPLOAD -->
     <div class="btns--download">
       <download-csv
         class="btn btn--grey btn--csv"
@@ -41,19 +39,26 @@
       >
         Download CSV
       </download-csv> 
-      <Upload class="btn btn--grey btn--csv" /> 
+      <Upload @upload-error="alert" class="btn btn--grey btn--csv" /> 
     </div> 
+    <div class="error-message" v-if="uploadError">
+      <h3>
+        There was an error during  upload. <br /> Please check that the
+        csv file to be uploaded is correctly formatted.
+      </h3>
+    </div>
 
-    <!--
-
-    -->
 
     <!-- SERIAL NUMBERS -->
     <div class="container--numbers">
       <ul>
         <li class="item" v-for="item in items" :key="item.Q">
           <span class="number" @click="edit(item)"> 
-            <Card>{{ item.nr }}    {{ item.date }} {{ item.name }}</Card> 
+            <Card>
+              <span> {{ item.nr }} </span>
+              <span > {{ item.name }} </span>
+              <span > {{ item.date }} </span>
+            </Card> 
           </span> 
           <button class="btn--del" @click="remove(item)">
             <Delete class="del" />
@@ -61,19 +66,34 @@
         </li> 
       </ul> 
     </div> 
+    <hr> 
      
     <!-- BIG BUTTONS -->
-    <div class="container--bigButtons">
-      <button class="btn btn--grey" type="button" @click="addN(10)">
+    <div v-if="!deletingAll" class="container--bigButtons">
+      <button class="btn btn--add" type="button" @click="addN(10)">
         Add 10
       </button>
-      <button class="btn btn--grey" type="button" @click="addN(100)">
+      <button class="btn btn--add" type="button" @click="addN(100)">
         Add 100
       </button>
-      <button class="btn btn--grey" type="button" @click="deleteAll">
+      <button 
+        class="btn btn--deleteAll" 
+        type="button" 
+        @click="deleteAll"
+      >
         Delete All
       </button>
     </div> 
+    <div class="deleting" v-if="deletingAll">
+      <p class="are-you-sure">
+        Are you sure you would like to delete all entries?
+      </p>
+      <span class="yes-no">
+        <button @click="deleteAll" class="btn btn--grey">Yes</button>
+        <button @click="deletingAll = !deletingAll" class="btn btn--grey">No</button>
+      </span>
+    </div>
+
   </div>
 </template>
 
@@ -88,7 +108,9 @@ export default {
       filtering: false,
       fields: {},
       groupBy: '',
-      strings: ['p', 's', 'h', 'v', 'r', 'name', 'date'], // for groupby
+      strings: ['p', 's', 'h', 'v', 'r', 'date', 'name'], // for groupby
+      uploadError: false,
+      deletingAll: false,
     };
   },
   computed: {
@@ -98,7 +120,6 @@ export default {
     items: {
       get() {
         let arr = [ ...this.$store.getters.items ];
-        console.log('items: ', arr);
         if (this.groupBy) {
           arr = sortItems(arr, this.groupBy);
         }
@@ -138,7 +159,12 @@ export default {
       this.items = await this.$store.getters.items;
     },
     async deleteAll() {
-      await this.$store.dispatch('deleteAll');
+      if (this.deletingAll) {
+        await this.$store.dispatch('deleteAll');
+        this.deletingAll = !this.deletingAll;
+      } else {
+        this.deletingAll = !this.deletingAll;
+      }
       this.items = await this.$store.getters.items;
     },
     edit(item) {
@@ -160,7 +186,13 @@ export default {
         if (el === targetEl) el.classList.toggle('highlighted');
         else el.classList.remove('highlighted');
       });
-    }
+    },
+    alert() {
+      this.uploadError = !this.uploadError;
+      setTimeout(() => {
+        this.uploadError = !this.uploadError;
+      }, 9000);
+    },
   },
 }
 </script>
@@ -225,6 +257,13 @@ export default {
   background: salmon;
 }
 
+.error-message h3 {
+  margin-block: 4rem;
+  color: maroon;
+  font-size: 1.4rem;
+  text-align: center;
+}
+
 .container--numbers {
   margin-left: -2rem;
 }
@@ -236,7 +275,15 @@ ul {
   margin-left: 0;
   margin-bottom: 6rem;
   padding-left: 0;
+  padding-bottom: 2rem;
   font-size: 2rem; 
+}
+
+hr {
+  width: 80vw;
+  border-top: 2px solid black;
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+  margin-bottom: 2rem;
 }
 
 .item {
@@ -252,7 +299,7 @@ ul {
   letter-spacing: 3px;
   cursor: pointer;
   color: black;
-  margin-left: 6rem;
+  margin-inline: 6rem 5rem;
 }
 
 .btn {
@@ -260,7 +307,7 @@ ul {
 }
 
 .btn--del {
-  margin-left: 8rem;
+  margin-left: 12rem;
   background: none;
   border: none;
 }
@@ -279,13 +326,57 @@ ul {
   stroke: maroon;
 }
 
+.container--bigButtons {
+  padding: 5rem;
+  width: 60vw;
+  display: flex;
+  justify-content: center;
+}
+
+.btn--add, .btn--deleteAll {
+  width: 8rem;
+  border-radius: 10px;
+  background: #ccc;
+  font-size: 1.4rem;
+  padding: 10px;
+}
+.btn--deleteAll {
+  background: #a26161;
+}
+
+.deleting {
+  padding: 2rem;
+  border: 2px solid chartreuse;
+  border-radius: 20px;
+}
+
+.deleting p {
+  font-weight: bold;
+  font-size: 1.4rem;
+}
+.yes-no {
+  display: flex;
+  justify-content: center;
+}
+.yes-no .btn {
+  background: #ccc;
+}
+
+.yes-no .btn:hover,
+.btn--add:hover {
+  background: black;
+  color: white;
+}
+
 @media (max-width: 480px) {
   .container {
     width: 100vw;
     display: flex;
     flex-direction: column;
+    align-items: center;
   }
   .title {
+    margin-inline: auto;
     text-align: center;
   }
   .ordering {
@@ -318,26 +409,30 @@ ul {
     margin-left: 0.5rem;
   }
   ul {
-    width: 280px;
+    width: 100vw;
     padding-top: 2rem;
     list-style: none;
     margin-bottom: 4rem;
-    padding: 1rem;
-    padding-left: 0;
+    margin-inline: 0;
     font-size: 1.1rem; 
+    padding: 8px;
   }
   .item {
     display: grid;
-    grid-template-columns: 70% 20%;
+    grid-template-columns: 6fr 1fr;
     grid-column-gap: 3rem;
+
   }
   .container--bigButtons {
+    border-top: 1px solid black;
+    padding: 2rem;
+    width: 100vw;
     display: flex;
     flex-direction: column;
+    align-items: center;
   }
-  .btn--grey {
-    font-size: 1rem;
-    padding: 10px;
+  .btn--del  {
+    margin-left: -3rem;
   }
 }
 </style>

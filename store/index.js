@@ -19,6 +19,9 @@ export const state = () => ({
 
 
 export const mutations = {
+  sortItems(state) {
+    state.items = sortByQ([...state.items]);
+  },
   addItem(state, item) {
     state.items = [...state.items, item];
   },
@@ -44,15 +47,19 @@ export const mutations = {
 
 
 export const actions = {                               
-  replaceAll({ commit, dispatch, getters }, payload) {    // TODO
-//     const { nrObjects } = payload;
-    const nrObj = { p, s, h, v, q, r };
-    let nrs = nrObjects.map(obj => nrFromObj(obj));
+  replace({ commit, dispatch, getters }, objects) {
+    const items = [];
+    objects.forEach(obj => {
+      const { p, s, h, v, q, r, name, date } = obj;
+      const nr = nrFromObj({ p, s, h, v, q, r });
+      const Q = +q;
+      items.push({ Q, nr, name, date });
+    });
+
     dispatch('deleteAll');
-    commit('addManyNrs', nrs);
     commit('addManyItems', items);
 
-    let Q = getters.largestQ;
+    const Q = getters.largestQ;
     commit('setQ', Q + 1);
   },
 
@@ -73,6 +80,7 @@ export const actions = {
     if (!qExists) {
       commit('addItem', item);
       commit('incrementQ');
+      commit('sortItems');
     } else { // edit item
       const idx = getters.idxFromQ(Q);
       commit('editItem', { idx, item });
@@ -90,13 +98,12 @@ export const actions = {
     if (qExists || newQ > getters.nextQ) return;
     const item = getters.itemFromQ(oldQ);
     dispatch('removeItem', oldQ);
-    commit('addItem', { newQ, nr: nrObj, name, date });
+    commit('addItem', { newQ, nr, name, date });
+    commit('sortItems');
   },
-//     commit('sortNrs');
 
   removeItem({ commit, getters }, Q) {
     const idx = getters.idxFromQ(Q);
-    console.log('** idx: ', idx);
     commit('removeItem', idx);
   },
 
@@ -112,9 +119,10 @@ export const actions = {
     let Q = getters.largestQ + 1;
     let items = addNR(Q);
     commit('addManyItems', items);
+    commit('sortItems');
+
     Q = getters.largestQ + 1;
     commit('setQ', Q);
-//     commit('sortNrs');
   },
 
   deleteAll({ commit }) {
@@ -130,6 +138,7 @@ export const getters = {
   fieldsFromQ(state, getters) {
     return Q => {
       const item = getters.itemFromQ(Q);
+      console.log('** item: ', item);
       const nrObj = objFromNr(item.nr);
       return { ...nrObj, name: item.name, date: item.date };
     }
@@ -149,10 +158,6 @@ export const getters = {
   nextq(state) {
     return formatQ(state.Q);
   },
-//  nextEmptyObject(state) {
-//    const q = String(state.Q).padStart(3, 0);
-//    return { ...emptyObj, q };
-//  },
   nrFromQ(state, getters) {
     return Q => state.items.reduce((acc, val, idx) => val.Q === Q ? val.nr : acc, null);
   },
