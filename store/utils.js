@@ -27,11 +27,11 @@ export const objFromNr = nr => {
 export const QFromItem = item => item.Q;
 
 export const isValid = nrObj => {
-  return 6 > nrObj.p.length > 0 &&
-    3 > nrObj.s.length > 0 &&
-    2 > nrObj.h.length > 0 &&
-    6 > nrObj.v.length > 1 &&
-    4 > nrObj.r.length > 0;
+  return nrObj.p.length > 0 &&
+    nrObj.s.length > 0 &&
+    nrObj.h.length > 0 &&
+    nrObj.v.length > 1 &&
+    nrObj.r.length > 0;
 };
 
 export const fieldsFromItem = item => {
