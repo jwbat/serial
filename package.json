@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "core-js": "^3.9.1",
-    "gsap": "^3.7.1",
     "nuxt": "^2.15.3",
     "vue-json-csv": "^1.2.12",
     "vuex-persist-indexeddb": "^0.1.3"
