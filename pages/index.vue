@@ -22,7 +22,7 @@
       <button class="btn btn--ordering" @click="reverse">Reverse</button> 
       <span class="span--groupby">Group by:</span> 
       <button 
-        v-for="str in strings"
+        v-for="str in groupByFields"
         ref="btnRef"
         class="btn btn--ordering" 
         @click="group(str, $event)"
@@ -48,7 +48,6 @@
       </h3>
     </div>
 
-
     <!-- SERIAL NUMBERS -->
     <ItemList 
       :items="items" 
@@ -56,9 +55,7 @@
       @remove="remove" 
     /> 
 
-
     <hr> 
-     
     <!-- BIG BUTTONS -->
     <div v-if="!deletingAll" class="container--bigButtons">
       <button class="btn btn--add" type="button" @click="addN(10)">
@@ -99,7 +96,7 @@ export default {
       filtering: false,
       fields: {},
       groupBy: '',
-      strings: ['p', 's', 'h', 'v', 'r', 'date', 'name'], // for groupby
+      groupByFields: ['p', 's', 'h', 'v', 'r', 'date', 'name'],
       uploadError: false,
       deletingAll: false,
     };
@@ -269,11 +266,6 @@ hr {
 .btn--csv {
   color: #ddd;
   border-color: #ddd;
-}
-
-.del:hover {
-  width: 28px;
-  height: 28px;
 }
 
 .container--bigButtons {

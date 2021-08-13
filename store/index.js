@@ -1,9 +1,6 @@
 import { 
-  nrsFromItems,
   nrFromObj, 
   objFromNr,
-  emptyObj, 
-  QFromNr, 
   isValid, 
   sortByQ,
   getNRandomItems,

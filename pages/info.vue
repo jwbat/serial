@@ -23,10 +23,7 @@
         Input fields must all contain values before "Save" or enter / return 
         will add it to the list.
       </p>
-      <p> Entering
-        <span class="underline">CHI 5 R 110 001 A</span> 
-        will get formatted to
-        <span class="underline">CHI-5R-V110-001_REVA</span>
+      <p> Entering CHI 5 R 110 001 A will get formatted to CHI-5R-V110-001_REVA
       </p>
     </section> 
     <section>
@@ -99,8 +96,8 @@
     <section>
       <h2>Download & Upload CSV</h2> 
       <p>
-        Press "Download CSV". The currently shown list will become a csv file in the
-        downloads folder. If the list is filtered, grouped or
+        Press "Download CSV". The currently shown list will become 'serials.csv' in
+        the downloads folder formatted as shown below.  If the list is filtered, grouped or
         reversed, that is the csv that will be generated. To get the complete, ungrouped, 
         unfiltered list, use "Clear" to un-filter or un-highlight the highlighted GroupBy button.
       </p> 
@@ -111,10 +108,12 @@
       </p> 
       <p>
         • Keep downloaded csv files and give them good names to preserve any
-        desired state of the data.
+        desired state of the data and readily identify them.
       </p> 
       <p>
-        • CSVs to be uploaded should have the same format as downloaded ones:
+        • CSVs to be uploaded should have the same format as downloaded ones. If
+        a csv hasn't been altered since being downloaded, it will already
+        be formatted properly.
       </p> 
      <article>
       <h3>Program,Size,Hand, Version,Sequence,Revision, Name,Date</h3> 

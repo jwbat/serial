@@ -79,6 +79,11 @@ ul {
   stroke: maroon;
 }
 
+.del:hover {
+  width: 28px;
+  height: 28px;
+}
+
 @media (max-width: 480px) {
   .container--numbers {
     max-width: 100%;

@@ -3,17 +3,10 @@ export const nrFromObj = obj => {
   return `${ p }-${ s }${ h }-V${ v }-${ q }_REV${ r }`;
 };
 
-export const nrsFromItems = items => {
-  return items.map(item => item.nr);
-};
-
 export const formatQ = Q => String(Q).padStart(3, 0);
 
-export const emptyObj = { p: '', s: '', h: '', v: '', r: '', name: '' };
-
-// e.g,  n = 'ART-4R-V120-003_REVC'
-//            --- --  --- ---    -
-//             p  sh   v   q     r
+// nr:  'ART-4R-V120-003_REVC'
+// obj: { p: 'ART', s: '4', h: 'R', v: '120', q: '003', r: 'C' }
 export const objFromNr = nr => {
   if (!nr) return {};
   try {
@@ -33,18 +26,12 @@ export const objFromNr = nr => {
 
 export const QFromItem = item => item.Q;
 
-export const QFromNr = nr => {
-  const obj = objFromNr(nr)
-  const q = obj.q;
-  return +q;
-};
-
 export const isValid = nrObj => {
-  return nrObj.p.length > 0 &&
-    nrObj.s.length > 0 &&
-    nrObj.h.length > 0 &&
-    nrObj.v.length === 3 &&
-    nrObj.r.length > 0;
+  return 6 > nrObj.p.length > 0 &&
+    3 > nrObj.s.length > 0 &&
+    2 > nrObj.h.length > 0 &&
+    6 > nrObj.v.length > 1 &&
+    4 > nrObj.r.length > 0;
 };
 
 export const fieldsFromItem = item => {
@@ -95,7 +82,7 @@ const randH = () => ['R', 'L'][randInt(0, 1)];
 const randV = () => ['100', '110', '120', '130', '112', '135'][randInt(0, 5)];
 const randR = () => ['A', 'B', 'C', 'AB'][randInt(0, 3)];
 
-const randName = () => ['Joe', 'Elmer', 'Sue', 'Yoko', 'Dweezil'][randInt(0, 4)];
+const randName = () => ['Joe', 'Elmer', 'Sue', 'Yoko', 'Chad'][randInt(0, 4)];
 
 
 export const getDate = () => {
@@ -164,8 +151,8 @@ export const csvToJson = csvString => {
   let objects = lines.map(line => {
     const fields = line.split(',');
     if (fields.length !== 8) return 'error';
-    return Object.fromEntries(keys.map((key, i) => [key, fields[i]]));
+    return Object.fromEntries(keys.map((key, i) => [key, fields[i].trim()]));
   });
   if (objects.includes('error')) return false;
-  return objects; // objectArray
+  return objects;
 };
