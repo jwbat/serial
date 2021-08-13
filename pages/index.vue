@@ -50,22 +50,13 @@
 
 
     <!-- SERIAL NUMBERS -->
-    <div class="container--numbers">
-      <ul>
-        <li class="item" v-for="item in items" :key="item.Q">
-          <span class="number" @click="edit(item)"> 
-            <Card>
-              <span> {{ item.nr }} </span>
-              <span > {{ item.name }} </span>
-              <span > {{ item.date }} </span>
-            </Card> 
-          </span> 
-          <button class="btn--del" @click="remove(item)">
-            <Delete class="del" />
-          </button> 
-        </li> 
-      </ul> 
-    </div> 
+    <ItemList 
+      :items="items" 
+      @edit="edit" 
+      @remove="remove" 
+    /> 
+
+
     <hr> 
      
     <!-- BIG BUTTONS -->
@@ -197,7 +188,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .container {
   margin: 0 auto;
   padding-bottom: 5rem;
@@ -264,52 +255,15 @@ export default {
   text-align: center;
 }
 
-.container--numbers {
-  margin-left: -2rem;
-}
-
-ul {
-  width: 700px;
-  padding-top: 3rem;
-  list-style: none;
-  margin-left: 0;
-  margin-bottom: 6rem;
-  padding-left: 0;
-  padding-bottom: 2rem;
-  font-size: 2rem; 
-}
-
 hr {
   width: 80vw;
-  border-top: 2px solid black;
+  border-top: 2px solid blue;
   box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
   margin-bottom: 2rem;
 }
 
-.item {
-  padding-bottom: 0.5rem;
-  display: grid;
-  grid-template-columns: 85% 10%;
-  grid-column-gap: 6rem;
-}
-
-.number {
-  font-size: 1.4rem;
-  font-weight: 400;
-  letter-spacing: 3px;
-  cursor: pointer;
-  color: black;
-  margin-inline: 6rem 5rem;
-}
-
 .btn {
   margin-inline: 1rem;
-}
-
-.btn--del {
-  margin-left: 12rem;
-  background: none;
-  border: none;
 }
 
 .btn--csv {
@@ -320,10 +274,6 @@ hr {
 .del:hover {
   width: 28px;
   height: 28px;
-}
-
-.del {
-  stroke: maroon;
 }
 
 .container--bigButtons {
@@ -345,7 +295,8 @@ hr {
 }
 
 .deleting {
-  padding: 2rem;
+  margin: 1rem;
+  padding: 1rem;
   border: 2px solid chartreuse;
   border-radius: 20px;
 }
@@ -354,6 +305,12 @@ hr {
   font-weight: bold;
   font-size: 1.4rem;
 }
+
+.are-you-sure {
+  text-align: center;
+  color: #f6ff00;
+}
+
 .yes-no {
   display: flex;
   justify-content: center;
@@ -424,7 +381,6 @@ hr {
 
   }
   .container--bigButtons {
-    border-top: 1px solid black;
     padding: 2rem;
     width: 100vw;
     display: flex;

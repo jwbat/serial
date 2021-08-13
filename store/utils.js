@@ -27,7 +27,6 @@ export const objFromNr = nr => {
     return { p, s, h, v, q, r };
   }
   catch {
-    console.log('nr: ', nr);
     return ;
   }
 };

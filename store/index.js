@@ -138,7 +138,6 @@ export const getters = {
   fieldsFromQ(state, getters) {
     return Q => {
       const item = getters.itemFromQ(Q);
-      console.log('** item: ', item);
       const nrObj = objFromNr(item.nr);
       return { ...nrObj, name: item.name, date: item.date };
     }

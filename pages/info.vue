@@ -8,9 +8,9 @@
         same data.
       </p>
       <p>
-        If there is ever a need to clear the browser cache, which 
-        deletes the browser's DB, download a csv first. Restoring data is as fast and
-        easy as uploading the csv.
+        If there is ever a need to clear the browser cache -which 
+        deletes the browser's DB- download a csv first. To restore the data,
+        upload the csv.
       </p>
       <p>
         CSV downloads (see below) can be used to preserve snapshots
@@ -18,7 +18,7 @@
       </p>
     </section> 
     <section class="format">
-      <h2>Inputs</h2> 
+      <h2>Entering Data</h2> 
       <p>
         Input fields must all contain values before "Save" or enter / return 
         will add it to the list.
@@ -29,23 +29,24 @@
         <span class="underline">CHI-5R-V110-001_REVA</span>
       </p>
     </section> 
+    <section>
+      <h2>Sequence Number</h2> 
+      <p>
+        The second to last input field holds the sequence number, Q, which gets 
+        auto-incremented by one for each number added.
+        This input field is disabled by default.
+      </p>
+      <p>
+        However, the sequence number can be changed via "Edit Q".  A new sequence number
+        must be at least one more than the largest in the list so that
+        auto-incrementing works properly for new entries.
+      </p>
+    </section> 
     <section class="format">
       <h2>Add 10 / Add 100</h2> 
       <p>
-        Randomly auto-generate 10 or 100 entries at a time for practice or testing.
-        Use Delete All to start fresh with no entries.
-      </p>
-    </section> 
-    <section>
-      <h2>Q</h2> 
-      <p>
-        The second to last input field holds the sequence number, Q, which gets 
-        auto-incremented. This input field is disabled by default.
-      </p>
-      <p>
-        However, it can be reset via "Edit Q".  A new sequence number
-        must be at least one more than the largest so that
-        auto-incrementing works properly for new entries.
+        Auto-generate 10 or 100 random entries at a time for practice or testing.
+        Use Delete All to delete the database and start again at no entries.
       </p>
     </section> 
     <section>
@@ -99,8 +100,9 @@
       <h2>Download & Upload CSV</h2> 
       <p>
         Press "Download CSV". The currently shown list will become a csv file in the
-        downloads folder. If the list has been filtered, grouped or
-        reversed, that is the csv that will be generated.
+        downloads folder. If the list is filtered, grouped or
+        reversed, that is the csv that will be generated. To get the complete, ungrouped, 
+        unfiltered list, use "Clear" to un-filter or un-highlight the highlighted GroupBy button.
       </p> 
       <p>
         Press "Upload CSV".  Select the csv file to be uploaded. It will completely replace
@@ -108,11 +110,11 @@
         done with caution.
       </p> 
       <p>
-        • Keep downloaded csv files and name them to easily restore data to any previous
-        state.
+        • Keep downloaded csv files and give them good names to preserve any
+        desired state of the data.
       </p> 
       <p>
-        • CSVs to upload should have the same format as downloaded ones:
+        • CSVs to be uploaded should have the same format as downloaded ones:
       </p> 
      <article>
       <h3>Program,Size,Hand, Version,Sequence,Revision, Name,Date</h3> 

@@ -7,10 +7,9 @@
 
 <style>
 html {
-  background: #7288a2;
-  /*
-  background: #779bac;
-   */
+  background: #1f4037;
+  background: -webkit-linear-gradient(to bottom, #62c3bb, #1f4037);
+  background: linear-gradient(to bottom, #62c3bb, #1f4037);
 }
 
 *,
