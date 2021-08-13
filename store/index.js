@@ -112,9 +112,9 @@ export const actions = {
   },
 
   addNRandom({ commit, getters }, n) {
-    let addNR = getNRandomItems(n);
-    let Q = getters.largestQ + 1;
-    let items = addNR(Q);
+    const addNR = getNRandomItems(n);
+    let Q = getters.nextQ;
+    const items = addNR(Q);
     commit('addManyItems', items);
     commit('sortItems');
 
