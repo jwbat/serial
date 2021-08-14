@@ -33,10 +33,6 @@ html {
   color: #3b8070;
 }
 
-.btn--green:hover {
-  color: #fff;
-  background-color: #3b8070;
-}
 
 .btn--grey {
   display: inline-block;
@@ -45,8 +41,14 @@ html {
   color: #35495e;
 }
 
-.btn--grey:hover {
-  color: #fff;
-  background-color: #35495e;
+@media (hover: hover) {
+  .btn--grey:hover {
+    color: #fff;
+    background-color: #35495e;
+  }
+  .btn--green:hover {
+    color: #fff;
+    background-color: #3b8070;
+  }
 }
 </style>

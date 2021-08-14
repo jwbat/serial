@@ -233,12 +233,6 @@ export default {
   background: #e5d232;
 }
 
-.btn--ordering:hover  {
-  cursor: pointer;
-  background: orange;
-  color: white;
-}
-
 .highlighted {
   border-bottom: 4px solid black;
   border-top: 4px solid black;
@@ -311,10 +305,11 @@ hr {
   background: #ccc;
 }
 
-.yes-no .btn:hover,
-.btn--add:hover {
-  background: black;
-  color: white;
+@media (hover: hover) {
+  .btn--ordering:hover {
+    background: blue;
+    color: white;
+  }
 }
 
 @media (max-width: 480px) {

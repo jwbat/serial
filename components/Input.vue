@@ -227,9 +227,12 @@ input::placeholder {
   color: grey;
   border-color: grey;
 }
-.btn--editQ:hover  {
-  background: maroon;
-  color: white;
+
+@media (hover: hover) {
+  .btn:hover {
+    background: maroon;
+    color: white;
+  }
 }
 </style>
 
