@@ -2,43 +2,30 @@
   <form @submit.prevent="onSave">
     <section class="inputs">
       <input 
-        v-if="!editingQ" 
         v-model.trim="entered.p" 
         v-uppercase
         placeholder="Program" 
         ref="inputP" 
       />
       <input 
-        v-if="!editingQ"  
         v-model.trim="entered.s" 
         placeholder="Size" 
       /> 
       <input 
-        v-if="!editingQ" 
         v-model.trim="entered.h" 
         v-uppercase
         placeholder="Hand" 
       /> 
       <input 
-        v-if="!editingQ" 
         v-model.trim="entered.v" 
         placeholder="Version" 
       /> 
       <input 
-        v-model.trim="entered.q" 
-        placeholder="Sequence" 
-        :class="{ disabled: !resettingQ && !editingQ }"
-        :disabled="!resettingQ && !editingQ" 
-        ref="inputQ"
-      /> 
-      <input 
-        v-if="!editingQ" 
         v-model.trim="entered.r" 
         v-uppercase
         placeholder="Revision"  
       /> 
       <input 
-        v-if="!editingQ"  
         v-model.trim="entered.name" 
         placeholder="Name" 
       /> 
@@ -48,7 +35,6 @@
         Save
       </button>
       <button 
-        v-if="!editingQ" 
         @click="clearForm" 
         class="btn btn--green" 
         type="button"
@@ -56,36 +42,11 @@
         Clear
       </button>
       <button 
-        v-if="!resettingQ && selectedQ" 
-        @click="reassignQ" 
-        class="btn btn--green" 
-        type="button"
-      >
-        Reassign Q
-      </button>
-      <button 
-        v-if="!selectedQ && !editingQ"
         @click="filter" 
         class="btn btn--green" 
         type="button" 
       > 
         Filter
-      </button>
-      <button 
-        v-if="!selectedQ && !editingQ"
-        @click="editQ"
-        class="btn btn--green btn--editQ"
-        type="button" 
-      >
-        Edit Q
-      </button>
-      <button 
-        v-if="editingQ"
-        @click="editingQ = false"
-        class="btn btn--green" 
-        type="button"
-      >
-        Exit
       </button>
     </section> 
   </form> 
@@ -93,13 +54,10 @@
 
 <script>
 export default {
-  props: ['selectedQ', 'filtering', 'fields'],
-  emits: ['save', 'move', 'clearForm', 'editQ', 'filter'],
+  props: ['filtering', 'fields'],
+  emits: ['save', 'move', 'clearForm', 'filter'],
   data() {
     return {
-      resettingQ: false,
-      oldQ: null,
-      editingQ: false,
     };
   },
   mounted() { this.$refs.inputP.focus() },
@@ -107,13 +65,10 @@ export default {
     entered: {
       get() {
         if (this.filtering) {
-          return { p: '', s:'', h: '', v: '', q: '', r: '', name: '', ...this.fields };
+//          return { ...this.fields };
+          return { p: '', s:'', h: '', v: '', r: '', name: '', ...this.fields };
         }
-        if (!this.selectedQ) {
-          let q = this.$store.getters.nextq;
-          return { p: '', s:'', h: '', v: '', q, r: '', name: '' };
-        }
-        return this.$store.getters.fieldsFromQ(this.selectedQ);
+        return { p: '', s:'', h: '', v: '', r: '', name: '', ...this.fields }; 
       },
       set(newVal) {
         return newVal;
@@ -122,44 +77,23 @@ export default {
   },
   methods: {
     onSave() {
-      if (this.resettingQ) {
-        this.$emit('move', this.entered, this.oldQ);
-        this.clearForm();
-        return;
-      }
-      if (this.editingQ) {
-        let newQ = this.entered.q;
-        this.$store.dispatch('editQ', newQ);
-        this.clearForm();
-        return;
-      }
       this.$emit('save', this.upper(this.entered));
     },
     filter() {
-      delete this.entered['q'];
+      console.log('inside filter ', this.entered);
       this.$emit('filter', this.upper(this.entered));
     },
     clearForm() {
       this.$emit('clearForm');
-      this.resettingQ = false;
-      this.editingQ = false;
-      this.oldQ = null;
-    },
-    reassignQ() {
-      console.log('selected Q: ', this.selected);
-      this.oldQ = this.selectedQ;
-      this.resettingQ = !this.resettingQ;
-    },
-    editQ() {
-      this.editingQ = true;
-      this.$nextTick(() => {
-        this.$refs.inputQ.focus();
-      });
     },
     upper(obj) {
-      obj.p = obj['p'].toUpperCase();
-      obj.h = obj['h'].toUpperCase();
-      obj.r = obj['r'].toUpperCase();
+      const assign = str => obj[str] ? obj[str].toUpperCase() : ''; 
+      obj.p = assign('p');
+      obj.h = assign('h');
+      obj.r = assign('r');
+
+      obj.name = obj[name] ? 
+        obj.name[0].toUpperCase() + obj['name'].slice(1).toLowerCase() : '';
       return obj;
     }
   },
@@ -200,10 +134,6 @@ input {
   color: #222;
 }
 
-.input--editQ {
-  width: 10rem;
-}
-
 input::placeholder {
   font-size: 1.1rem;
 }
@@ -221,11 +151,6 @@ input::placeholder {
   margin: 1rem;
   font-size: 1.2rem;
   border-radius: 10px;
-}
-
-.btn--editQ {
-  color: grey;
-  border-color: grey;
 }
 
 @media (hover: hover) {

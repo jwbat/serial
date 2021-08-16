@@ -1,7 +1,7 @@
 <template>
   <div class="container--numbers">
     <ul>
-      <li class="item" v-for="item in items" :key="item.Q">
+      <li class="item" v-for="item in items" :key="item.nr">
         <span class="number" @click="edit(item)"> 
           <Card>
             <span> {{ item.nr }} </span>

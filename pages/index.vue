@@ -7,12 +7,10 @@
     <!-- INPUT COMPONENT -->
     <div>
       <Input 
-        :selectedQ="selectedQ" 
         :filtering="filtering" 
         :fields="fields" 
         @save="save" 
         @filter="filter"
-        @move="move" 
         @clearForm="clearForm" 
       /> 
     </div> 
@@ -61,9 +59,6 @@
       <button class="btn btn--add" type="button" @click="addN(10)">
         Add 10
       </button>
-      <button class="btn btn--add" type="button" @click="addN(100)">
-        Add 100
-      </button>
       <button 
         class="btn btn--deleteAll" 
         type="button" 
@@ -86,12 +81,11 @@
 </template>
 
 <script>
-import { QFromItem, filter, sortItems, jsonFromItems } from '../store/utils.js';
+import { filter, sortItems, jsonFromItems } from '../store/utils.js';
 
 export default {
   data() {
     return {
-      selectedQ: null,
       reversed: false,
       filtering: false,
       fields: {},
@@ -125,13 +119,8 @@ export default {
     },
   },
   methods: {
-    async save(fieldsObj) {
-      await this.$store.dispatch('save', fieldsObj);
-      this.items = await this.$store.getters.items;
-      this.clearForm();
-    },
-    async move(fieldsObj, oldQ) {
-      await this.$store.dispatch('move', { fieldsObj, oldQ });
+    async save(obj) {
+      await this.$store.dispatch('addItem', obj);
       this.items = await this.$store.getters.items;
       this.clearForm();
     },
@@ -140,7 +129,7 @@ export default {
       this.fields = fieldsObj;
     },
     remove(item) {
-      this.$store.dispatch('removeItem', QFromItem(item));
+      this.$store.dispatch('removeItem', item);
     },
     async addN(n) {
       await this.$store.dispatch('addNRandom', n);
@@ -156,11 +145,9 @@ export default {
       this.items = await this.$store.getters.items;
     },
     edit(item) {
-      this.selectedQ = QFromItem(item);
     },
     clearForm() {
       this.filtering = false;
-      this.selectedQ = null;
       this.fields = {};
     },
     reverse() {
@@ -275,6 +262,7 @@ hr {
   background: #ccc;
   font-size: 1.4rem;
   padding: 10px;
+  margin-inline: 3rem;
 }
 .btn--deleteAll {
   background: #a26161;
