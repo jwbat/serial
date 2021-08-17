@@ -27,6 +27,7 @@
       /> 
       <input 
         v-model.trim="entered.name" 
+        v-capitalize
         placeholder="Name" 
       /> 
     </section> 
@@ -65,7 +66,6 @@ export default {
     entered: {
       get() {
         if (this.filtering) {
-//          return { ...this.fields };
           return { p: '', s:'', h: '', v: '', r: '', name: '', ...this.fields };
         }
         return { p: '', s:'', h: '', v: '', r: '', name: '', ...this.fields }; 
@@ -80,7 +80,6 @@ export default {
       this.$emit('save', this.upper(this.entered));
     },
     filter() {
-      console.log('inside filter ', this.entered);
       this.$emit('filter', this.upper(this.entered));
     },
     clearForm() {
@@ -92,7 +91,7 @@ export default {
       obj.h = assign('h');
       obj.r = assign('r');
 
-      obj.name = obj[name] ? 
+      obj.name = obj.name ? 
         obj.name[0].toUpperCase() + obj['name'].slice(1).toLowerCase() : '';
       return obj;
     }

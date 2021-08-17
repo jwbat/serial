@@ -4,9 +4,9 @@
       <li class="item" v-for="item in items" :key="item.nr">
         <span class="number" @click="edit(item)"> 
           <Card>
-            <span> {{ item.nr }} </span>
-            <span > {{ item.name }} </span>
-            <span > {{ item.date }} </span>
+            <span> {{ item.nr   }} </span>
+            <span> {{ item.name }} </span>
+            <span> {{ item.date }} </span>
           </Card> 
         </span> 
         <button class="btn--del" @click="remove(item)">

@@ -16,7 +16,7 @@ export const objFromNr = nr => {
     const h = arr[1][1];
     const v = arr[2].slice(1);
     const q = arr[3];
-    const r = arr[4].slice(3)[0];
+    const r = arr[4].slice(3);
     return { p, s, h, v, q, r };
   }
   catch {
@@ -29,27 +29,26 @@ const objFromItem = item => {
 };
 
 const areEqual = (obj1, obj2) => {
-  return obj1.p === obj2.p &&
+  const bool = !!Object.keys(obj1).length && 
+    !!Object.keys(obj2).length &&
+    obj1.p === obj2.p &&
     obj1.s === obj2.s &&
     obj1.h === obj2.h &&
     obj1.v === obj2.v &&
     obj1.r === obj2.r;
+  return bool;
 };
 
 export const nrExists = (nrObj, items) => {
-  let arr = items.map(item => objFromNr(item.nr));
-  for (let item of arr) {
-    if (areEqual(nrObj, item)) {
-      return true;
-    }
-  }
-  return false;
+  let nrs = items.map(item => item.nr);
+  let nr = nrFromObj({ ...nrObj, q: '001' }); // nrObj needs a q
+  return nrs.includes(nr);
 };
 
-export const sequenceFromItems = (nrObj, items) => {
+export const sequenceFromNrObj = (nrObj, items) => {
   let objects = items.map(item => objFromNr(item.nr));
   let sequence = objects.filter(obj => areEqual(obj, nrObj));
-  return sequence;
+  return sequence;  // array of objects eq to nrObj
 };
 
 export const getHighestQInSequence = seq => {
@@ -65,8 +64,9 @@ export const isValid = nrObj => {
     nrObj.r.length > 0;
 };
 
-export const itemFromFields = fields => {
-  const { p, s, h, v, q, r, name, date  } = fields;
+export const itemFromObj = obj => {
+  if (!Object.keys(obj).length) return {};
+  const { p, s, h, v, q, r, name, date  } = obj;
   const Q = +q;
   const nr = nrFromObj({ p, s, h, v, q, r });
   return { nr, name, date };
@@ -75,26 +75,29 @@ export const itemFromFields = fields => {
 export const sortItems = (items, str) => {
   //  convert arr of items to arr of field objects
   //  sort by str, return sorted arr of items
+
   function compare(x, y) {
     if (x[str] < y[str]) return 1;
     if (x[str] > y[str]) return -1;
     return 0;
   }
-  let fieldsArr = items.map(item => objFromItem(item));
-  fieldsArr.sort(compare);
-  return fieldsArr.map(fields => itemFromFields(fields));
+
+  let itemObjects = items.map(item => objFromItem(item));
+  itemObjects.sort(compare);
+  let sortedItems = itemObjects.map(obj => itemFromObj(obj));
+  return sortedItems;
 }
 
 export const filter = (items, fltrObj) => {
-  let fieldsArr = items.map(item => objFromItem(item));
+  let itemObjects = items.map(item => objFromItem(item));
 
   let fltrObjKeys = Object.keys(fltrObj)
     .filter(key => fltrObj[key].length > 0 && key !== 'q');
 
   fltrObjKeys.forEach(key => {
-    fieldsArr = fieldsArr.filter(obj => obj[key] === fltrObj[key]);
+    itemObjects = itemObjects.filter(obj => obj[key] === fltrObj[key]);
   });
-  return fieldsArr.map(fields => itemFromFields(fields));
+  return itemObjects.map(obj => itemFromObj(obj));
 };
 
 const randInt = (low, high) => Math.floor(Math.random() * (high - low + 1) + low);

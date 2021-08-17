@@ -1,8 +1,9 @@
 import { 
-  sequenceFromItems,
+  sequenceFromNrObj,
   getHighestQInSequence,
   nrExists,
   nrFromObj, 
+  itemFromObj,
   getNRandomItems,
   formatQ,
   getDate,
@@ -19,11 +20,18 @@ export const mutations = {
   addItem(state, item) {
     state.items = [...state.items, item];
   },
+  insertItem(state, { idx, item }) {
+    let arr = [...state.items];
+    arr.splice(idx, 0, item);
+    state.items = arr;
+  },
   addManyItems(state, arr) {
     state.items = [...state.items, ...arr];
   },
   removeItem(state, idx) {
-    state.items.splice(idx, 1);
+    let arr = [...state.items];
+    arr.splice(idx, 1);
+    state.items = arr;
   },
   editItem(state, { idx, item }) {
     state.items.splice(idx, 1, item);
@@ -52,14 +60,24 @@ export const actions = {
     if (!isValid(obj)) return;
     const { p, s, h, v, r, name } = obj;
     const nrObj = { p, s, h, v, r };
-    let Q = 1;
-    if (getters.itemExists(nrObj)) {
-      Q = getters.highestQ(nrObj);
-      Q++;
+    let date = getDate();
+
+    let exists = getters.nrObjExists(nrObj);
+    if (exists) {
+      let hiQ = getters.highestQ(nrObj);
+      const nr = nrFromObj({ ...nrObj, q: formatQ(hiQ + 1) });
+      const item = { nr, name, date };
+      let idx = getters.idxOfLastInSequence(nrObj) + 1;
+      dispatch('insertItem', { idx, item });
+    } else {
+      const nr = nrFromObj({ ...nrObj, q: formatQ(1) });
+      const item = { nr, name, date };
+      commit('addItem', item);
     }
-    const nr = nrFromObj({ ...nrObj, q: formatQ(Q) });
-    const item = { nr, name, date: getDate() };
-    commit('addItem', item);
+  },
+
+  insertItem({ commit }, { idx, item }) {
+    commit('insertItem', { idx, item });
   },
 
   removeItem({ commit, getters }, item) {
@@ -70,7 +88,6 @@ export const actions = {
   addNRandom({ commit, getters }, n) {
     const items = getNRandomItems(n)();
     commit('addManyItems', items);
-
   },
 
   deleteAll({ commit }) {
@@ -82,21 +99,26 @@ export const getters = {
   items(state) {
     return [...state.items];
   },
-  nrs(state) {
-    return state.items.map(item => item.nr);
-  },
   idxFromItem(state) {
     return item => state.items.reduce((acc, val, idx) =>  {
-      return item.nr === val.nr ? idx : acc, null;
-    });
+      return item.nr === val.nr ? idx : acc;
+    }, null);
   },
-  itemExists(state) {
-    return obj => nrExists(obj, state.items);
+  nrObjExists(state) {
+    return nrObj => nrExists(nrObj, state.items);
   },
   highestQ(state) {
     return nrObj => {
-      let seq = sequenceFromItems(nrObj, [...state.items]);
+      let seq = sequenceFromNrObj(nrObj, [...state.items]);
       return getHighestQInSequence(seq);
     };
   },
+  idxOfLastInSequence(state, getters) {
+    return nrObj => {
+      let seq = sequenceFromNrObj(nrObj, [...state.items]);
+      let obj = seq[seq.length - 1];
+      let item = itemFromObj(obj);
+      return getters.idxFromItem(item);
+    };
+  }
 };
