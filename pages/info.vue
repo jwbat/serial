@@ -29,49 +29,31 @@
     <section>
       <h2>Sequence Number</h2> 
       <p>
-        The second to last input field holds the sequence number, Q, which gets 
-        auto-incremented by one for each number added.
-        This input field is disabled by default.
-      </p>
-      <p>
-        However, the sequence number can be changed via "Edit Q".  A new sequence number
-        must be at least one more than the largest in the list so that
-        auto-incrementing works properly for new entries.
+        The second to last input field holds the sequence number which gets 
+        auto-incremented by one if an identical serial number already exists.
       </p>
     </section> 
     <section class="format">
-      <h2>Add 10 / Add 100</h2> 
+      <h2>Add 10</h2> 
       <p>
-        Auto-generate 10 or 100 random entries at a time for practice or testing.
-        Use Delete All to delete the database and start again at no entries.
+        Auto-generate 10 random entries at a time for testing the application.
+        Use Delete All to delete the database and start again with no entries.
       </p>
-    </section> 
-    <section>
-      <h2>Edit an Entry</h2> 
-      <p>
-        Select an entry to be edited by clicking on it.  Its values will appear
-        in the input fields.
-      </p> 
-      <p>
-        Edit values and press "Save" (or enter / return).
-      </p> 
     </section> 
     <section>
       <h2>Filter</h2> 
       <p>
         To filter entries by one or more fields, enter the values to filter for
-        in the input fields and press "Filter".  Entering "5" in the Size field and pressing
-        Filter will return only entries with Size 5.  Entering CHI in Program and L in Hand 
-        will likewise return only entries that have both values.
+        in the input fields and press "Filter".  
       </p> 
       <p>
         Press "Clear" to return to the complete list of entries.
       </p> 
     </section> 
     <section>
-      <h2>Group By</h2> 
+      <h2>Group By and Reverse</h2> 
       <p>
-        P=Program, S=Size, H=Hand, V=Version, Q=SequenceNr, R=Revision, Name, Date
+        P=Program, S=Size, H=Hand, V=Version, R=Revision, Name, Date buttons:
       </p> 
       <p>
         Pressing any of these will sort the list of entries into groups by that value.
@@ -79,19 +61,9 @@
         Press again to go back to default sorting by sequence nr.
       </p> 
       <p>
-        "Reverse" any list, whether grouped, filtered, or complete.
+        "Reverse" any list, whether grouped, filtered, or complete. Reverse again to
+        return to the default order.
       </p>
-    </section> 
-    <section>
-      <h2>Reassign Q for an Entry</h2> 
-      <p>
-        Select an entry and press "Reassign Q". Edit the value, "Save" or enter / return.
-      </p> 
-      <p>
-        When reassigning the sequence nr, the new value must be less than the 
-        highest value already assigned in all entries. It also must not already be taken.
-        Trying to assign a Q that doesn't meet these criteria will make no change.
-      </p> 
     </section> 
     <section>
       <h2>Download & Upload CSV</h2> 
