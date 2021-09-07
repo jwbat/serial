@@ -1,6 +1,13 @@
 <template>
   <div class="info">
     <section class="format">
+      <h2>About</h2> 
+      <p>
+        This application formats and stores serial number data which can then be
+        sorted, filtered, grouped, and downloaded or uploaded as CSV files.
+      </p>
+    </section> 
+    <section class="format">
       <h2>Data Persistence</h2> 
       <p>
         The application stores its data in the browser's IndexedDB, which is

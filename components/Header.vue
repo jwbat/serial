@@ -1,7 +1,11 @@
 <template>
   <nav>
-    <nuxt-link to="/">Home</nuxt-link> 
-    <nuxt-link to="info">Info</nuxt-link> 
+    <nuxt-link to="/">
+      <Home />
+    </nuxt-link> 
+    <nuxt-link to="info">
+      <Info /> 
+    </nuxt-link> 
   </nav> 
 </template>
 
